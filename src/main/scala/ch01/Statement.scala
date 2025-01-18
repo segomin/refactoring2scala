@@ -26,19 +26,19 @@ class Statement {
     var volumeCredit = 0
     val result = new StringBuilder(s"청구내역 (고객명: ${invoice.customer})\n")
 
-    def amountFor(performance: Performance, play: Play): Int = {
-      var thisAmount = 0
+    def amountFor(perf: Performance, play: Play): Int = {
+      var result = 0
       play.kind match {
         case PlayType.TRAGEDY =>
-          thisAmount = 40000
-          if (performance.audience > 30) thisAmount += 1000 * (performance.audience - 30)
+          result = 40000
+          if (perf.audience > 30) result += 1000 * (perf.audience - 30)
 
         case PlayType.COMEDY =>
-          thisAmount = 30000
-          if (performance.audience > 20) thisAmount += 10000 + 500 * (performance.audience - 20)
-          thisAmount += 300 * performance.audience
+          result = 30000
+          if (perf.audience > 20) result += 10000 + 500 * (perf.audience - 20)
+          result += 300 * perf.audience
       }
-      thisAmount
+      result
     }
 
     for (performance <- invoice.performances) {
