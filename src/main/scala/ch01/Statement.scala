@@ -44,11 +44,15 @@ class Statement {
       // 희극 관객 5명마다 추가 포인트를 제공핟나.
       if (play.kind.eq(PlayType.COMEDY)) volumeCredit += floor(performance.audience / 5).toInt
       // 청구 내역을 출력한다.
-      result.append(s"${play.name}: $$${thisAmount / 100} ${performance.audience}석\n")
+      result.append(s"${play.name}: ${thisAmount.toDollar} (${performance.audience}석)\n")
       totalAmount += thisAmount
     }
-    result.append(s"총액: $$${totalAmount / 100}\n")
+    result.append(s"총액: ${totalAmount.toDollar}\n")
     result.append(s"적립 포인트: ${volumeCredit}점")
     result.toString
   }
+
+  extension (amount: Int)
+    private def toDollar: String = "$%,.2f".format((amount / 100).toDouble)
 }
+
