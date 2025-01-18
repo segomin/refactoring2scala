@@ -26,8 +26,7 @@ class Statement {
     var volumeCredit = 0
     val result = new StringBuilder(s"청구내역 (고객명: ${invoice.customer})\n")
 
-    for (performance <- invoice.performances) {
-      val play = plays.get(performance)
+    def amountFor(performance: Performance, play: Play): Int = {
       var thisAmount = 0
       play.kind match {
         case PlayType.TRAGEDY =>
@@ -39,6 +38,12 @@ class Statement {
           if (performance.audience > 20) thisAmount += 10000 + 500 * (performance.audience - 20)
           thisAmount += 300 * performance.audience
       }
+      thisAmount
+    }
+
+    for (performance <- invoice.performances) {
+      val play = plays.get(performance)
+      val thisAmount = amountFor(performance, play)
       // 포인트를 적립한다.
       volumeCredit += Math.max(performance.audience - 30, 0)
       // 희극 관객 5명마다 추가 포인트를 제공핟나.
