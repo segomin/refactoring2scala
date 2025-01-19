@@ -43,11 +43,18 @@ class Statement {
 
     def playFor(performance: Performance): Play = plays.get(performance)
 
-    for (performance <- invoice.performances) {
+    def volumeCreditsFor(perf: Performance): Int = {
       // 포인트를 적립한다.
-      volumeCredit += Math.max(performance.audience - 30, 0)
+      var result = 0
+      result += Math.max(perf.audience - 30, 0)
       // 희극 관객 5명마다 추가 포인트를 제공핟나.
-      if (playFor(performance).kind.eq(PlayType.COMEDY)) volumeCredit += floor(performance.audience / 5).toInt
+      if (playFor(perf).kind.eq(PlayType.COMEDY))
+        result += floor(perf.audience / 5).toInt
+      result
+    }
+
+    for (performance <- invoice.performances) {
+      volumeCredit += volumeCreditsFor(performance)
       // 청구 내역을 출력한다.
       result.append(s"${playFor(performance).name}: ${amountFor(performance).toDollar} (${performance.audience}석)\n")
       totalAmount += amountFor(performance)
