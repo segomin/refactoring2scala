@@ -54,7 +54,9 @@ class Plays(plays: (String, Play)*) {
   def get(performance: String): Play = playMap(performance)
 }
 
-class StatementData(val customer: String, val performances: List[PerformancePlay], val plays: Plays) {
+class StatementData(invoice: Invoice, val plays: Plays) {
+  val customer: String = invoice.customer
+  val performances: List[PerformancePlay] = invoice.performances.map(perf => PerformancePlay(perf, plays))
   val totalAmount: Int = totalAmountFor(performances)
   val totalVolumeCredits: Int = totalVolumeCreditsFor(performances)
 
@@ -77,12 +79,12 @@ class StatementData(val customer: String, val performances: List[PerformancePlay
 
 class Statement {
   def statement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice.customer, invoice.performances.map(perf => PerformancePlay(perf, plays)), plays)
+    val data = StatementData(invoice, plays)
     renderPlainText(data)
   }
 
-  def htmlStatement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice.customer, invoice.performances.map(perf => PerformancePlay(perf, plays)), plays)
+  def statement2(invoice: Invoice, plays: Plays): String = {
+    val data = StatementData(invoice, plays)
     renderHtml(data)
   }
 
