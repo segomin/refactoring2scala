@@ -15,25 +15,12 @@ object PlayType extends Enumeration {
 
 case class Play(name: String, kind: PlayType.Kind)
 
-class PerformancePlay(val perf: Performance, val play: Play) {
+class PerformancePlay(val perf: Performance, plays: Plays) {
+  val play: Play = plays.get(perf.playID)
   val audience: Int = perf.audience
-}
+  val amount: Int = amountFor(this)
+  val volumeCredits: Int = volumeCreditsFor(this)
 
-class Plays(plays: (String, Play)*) {
-  private val playMap: Map[String, Play] = Map(plays *)
-  def get(performance: String): Play = playMap(performance)
-}
-
-case class StatementData(customer: String, performances: List[PerformancePlay], plays: Plays)
-
-def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays.get(perf.playID))
-
-class Statement {
-
-  def statement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice.customer, invoice.performances.map(perf => enhancedPerformance(perf, plays)), plays)
-    renderPlainText(data)
-  }
 
   def amountFor(perf: PerformancePlay): Int = {
     var result = 0
@@ -59,19 +46,36 @@ class Statement {
       result += floor(perf.audience / 5).toInt
     result
   }
+}
+
+class Plays(plays: (String, Play)*) {
+  private val playMap: Map[String, Play] = Map(plays *)
+  def get(performance: String): Play = playMap(performance)
+}
+
+case class StatementData(customer: String, performances: List[PerformancePlay], plays: Plays)
+
+def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays)
+
+class Statement {
+
+  def statement(invoice: Invoice, plays: Plays): String = {
+    val data = StatementData(invoice.customer, invoice.performances.map(perf => enhancedPerformance(perf, plays)), plays)
+    renderPlainText(data)
+  }
 
   def renderPlainText(data: StatementData): String = {
     val result = new StringBuilder(s"청구내역 (고객명: ${data.customer})\n")
 
     for (performance <- data.performances) {
       // 청구 내역을 출력한다.
-      result.append(s"${performance.play.name}: ${amountFor(performance).usd} (${performance.perf.audience}석)\n")
+      result.append(s"${performance.play.name}: ${performance.amount.usd} (${performance.perf.audience}석)\n")
     }
 
     def totalAmount = {
       var result = 0
       for (performance <- data.performances) {
-        result += amountFor(performance)
+        result += performance.amount
       }
       result
     }
@@ -79,7 +83,7 @@ class Statement {
     def totalVolumeCredits = {
       var result = 0
       for (performance <- data.performances) {
-        result += volumeCreditsFor(performance)
+        result += performance.volumeCredits
       }
       result
     }
