@@ -20,8 +20,16 @@ class Plays(plays: (Performance, Play)*) {
   def get(performance: Performance): Play = playMap(performance)
 }
 
+case class StatementData(customer: String, performances: List[Performance], plays: Plays)
+
 class Statement {
+
   def statement(invoice: Invoice, plays: Plays): String = {
+    val data = StatementData(invoice.customer, invoice.performances, plays)
+    renderPlainText(data, invoice, plays)
+  }
+
+  def renderPlainText(data: StatementData, invoice: Invoice, plays: Plays): String = {
     val result = new StringBuilder(s"청구내역 (고객명: ${invoice.customer})\n")
 
     def amountFor(perf: Performance): Int = {
