@@ -23,7 +23,6 @@ class Plays(plays: (Performance, Play)*) {
 class Statement {
   def statement(invoice: Invoice, plays: Plays): String = {
     var totalAmount = 0
-    var volumeCredit = 0
     val result = new StringBuilder(s"청구내역 (고객명: ${invoice.customer})\n")
 
     def amountFor(perf: Performance): Int = {
@@ -54,10 +53,14 @@ class Statement {
     }
 
     for (performance <- invoice.performances) {
-      volumeCredit += volumeCreditsFor(performance)
       // 청구 내역을 출력한다.
       result.append(s"${playFor(performance).name}: ${amountFor(performance).usd} (${performance.audience}석)\n")
       totalAmount += amountFor(performance)
+    }
+
+    var volumeCredit = 0
+    for (performance <- invoice.performances) {
+      volumeCredit += volumeCreditsFor(performance)
     }
     result.append(s"총액: ${totalAmount.usd}\n")
     result.append(s"적립 포인트: ${volumeCredit}점")
