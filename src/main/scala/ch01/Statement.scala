@@ -56,22 +56,20 @@ class Statement {
       result.append(s"${playFor(performance).name}: ${amountFor(performance).usd} (${performance.audience}석)\n")
     }
 
-    def appleSource = {
-      var totalAmount = 0
+    def totalAmount = {
+      var result = 0
       for (performance <- invoice.performances) {
-        totalAmount += amountFor(performance)
+        result += amountFor(performance)
       }
-      totalAmount
+      result
     }
 
-    val totalAmount: Int = appleSource
-
     def totalVolumeCredits = {
-      var volumeCredit = 0
+      var result = 0
       for (performance <- invoice.performances) {
-        volumeCredit += volumeCreditsFor(performance)
+        result += volumeCreditsFor(performance)
       }
-      volumeCredit
+      result
     }
 
     result.append(s"총액: ${totalAmount.usd}\n")
