@@ -4,16 +4,16 @@ package ch01
 class StatementTest extends munit.FunSuite:
 
   test("chapter 1 test") {
-    val hamlet = Performance("hamlet", 55)
-    val asLike = Performance("as-like", 35)
-    val othello = Performance("othello", 40)
     val plays = Plays(
-      (hamlet, Play("Hamlet", PlayType.TRAGEDY)),
-      (asLike, Play("As You Like It", PlayType.COMEDY)),
-      (othello, Play("Othello", PlayType.TRAGEDY))
+      ("hamlet", Play("Hamlet", PlayType.TRAGEDY)),
+      ("as-like", Play("As You Like It", PlayType.COMEDY)),
+      ("othello", Play("Othello", PlayType.TRAGEDY))
     )
     val str = Statement().statement(
-      Invoice("BigCo", List(hamlet, asLike, othello)),
+      Invoice("BigCo",
+        List(Performance("hamlet", 55),
+          Performance("as-like", 35),
+          Performance("othello", 40))),
       plays
     )
     val expect =

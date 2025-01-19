@@ -15,9 +15,9 @@ object PlayType extends Enumeration {
 
 case class Play(name: String, kind: PlayType.Kind)
 
-class Plays(plays: (Performance, Play)*) {
-  private val playMap: Map[Performance, Play] = Map(plays *)
-  def get(performance: Performance): Play = playMap(performance)
+class Plays(plays: (String, Play)*) {
+  private val playMap: Map[String, Play] = Map(plays *)
+  def get(performance: String): Play = playMap(performance)
 }
 
 case class StatementData(customer: String, performances: List[Performance], plays: Plays)
@@ -47,7 +47,7 @@ class Statement {
       result
     }
 
-    def playFor(performance: Performance): Play = plays.get(performance)
+    def playFor(performance: Performance): Play = plays.get(performance.playID)
 
     def volumeCreditsFor(perf: Performance): Int = {
       // 포인트를 적립한다.
