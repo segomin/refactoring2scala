@@ -66,9 +66,8 @@ class Statement {
       volumeCredit
     }
 
-    val volumeCredit: Int = totalVolumeCredits
     result.append(s"총액: ${totalAmount.usd}\n")
-    result.append(s"적립 포인트: ${volumeCredit}점")
+    result.append(s"적립 포인트: ${totalVolumeCredits}점")
     result.toString
   }
 
