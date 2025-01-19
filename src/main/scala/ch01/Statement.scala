@@ -32,7 +32,7 @@ class Statement {
 
   def statement(invoice: Invoice, plays: Plays): String = {
     val data = StatementData(invoice.customer, invoice.performances.map(perf => enhancedPerformance(perf, plays)), plays)
-    renderPlainText(data, plays)
+    renderPlainText(data)
   }
 
   def amountFor(perf: PerformancePlay): Int = {
@@ -60,9 +60,8 @@ class Statement {
     result
   }
 
-  def renderPlainText(data: StatementData, plays: Plays): String = {
+  def renderPlainText(data: StatementData): String = {
     val result = new StringBuilder(s"청구내역 (고객명: ${data.customer})\n")
-
 
     for (performance <- data.performances) {
       // 청구 내역을 출력한다.
