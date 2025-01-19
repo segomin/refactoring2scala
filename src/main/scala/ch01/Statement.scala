@@ -55,6 +55,7 @@ class Plays(plays: (String, Play)*) {
 
 class StatementData(val customer: String, val performances: List[PerformancePlay], val plays: Plays) {
   val totalAmount: Int = totalAmountFor(performances)
+  val totalVolumeCredits: Int = totalVolumeCreditsFor(performances)
 
   def totalAmountFor(performances: List[PerformancePlay]) = {
     var result = 0
@@ -64,6 +65,13 @@ class StatementData(val customer: String, val performances: List[PerformancePlay
     result
   }
 
+  def totalVolumeCreditsFor(performances: List[PerformancePlay]) = {
+    var result = 0
+    for (performance <- performances) {
+      result += performance.volumeCredits
+    }
+    result
+  }
 }
 
 def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays)
@@ -80,27 +88,11 @@ class Statement {
 
     for (performance <- data.performances) {
       // 청구 내역을 출력한다.
-      result.append(s"${performance.play.name}: ${performance.amount.usd} (${performance.perf.audience}석)\n")
+      result.append(s"${performance.play.name}: ${performance.amount.usd} (${performance.audience}석)\n")
     }
 
-    def totalAmount(performances: List[PerformancePlay]) = {
-      var result = 0
-      for (performance <- performances) {
-        result += performance.amount
-      }
-      result
-    }
-
-    def totalVolumeCredits(performances: List[PerformancePlay]) = {
-      var result = 0
-      for (performance <- data.performances) {
-        result += performance.volumeCredits
-      }
-      result
-    }
-
-    result.append(s"총액: ${totalAmount(data.performances).usd}\n")
-    result.append(s"적립 포인트: ${totalVolumeCredits(data.performances)}점")
+    result.append(s"총액: ${data.totalAmount.usd}\n")
+    result.append(s"적립 포인트: ${data.totalVolumeCredits}점")
     result.toString
   }
 
