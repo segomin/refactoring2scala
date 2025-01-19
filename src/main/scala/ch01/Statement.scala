@@ -26,10 +26,10 @@ class Statement {
 
   def statement(invoice: Invoice, plays: Plays): String = {
     val data = StatementData(invoice.customer, invoice.performances, plays)
-    renderPlainText(data, invoice, plays)
+    renderPlainText(data, plays)
   }
 
-  def renderPlainText(data: StatementData, invoice: Invoice, plays: Plays): String = {
+  def renderPlainText(data: StatementData, plays: Plays): String = {
     val result = new StringBuilder(s"청구내역 (고객명: ${data.customer})\n")
 
     def amountFor(perf: Performance): Int = {
