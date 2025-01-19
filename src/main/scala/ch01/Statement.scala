@@ -30,7 +30,7 @@ class Statement {
   }
 
   def renderPlainText(data: StatementData, invoice: Invoice, plays: Plays): String = {
-    val result = new StringBuilder(s"청구내역 (고객명: ${invoice.customer})\n")
+    val result = new StringBuilder(s"청구내역 (고객명: ${data.customer})\n")
 
     def amountFor(perf: Performance): Int = {
       var result = 0
@@ -59,14 +59,14 @@ class Statement {
       result
     }
 
-    for (performance <- invoice.performances) {
+    for (performance <- data.performances) {
       // 청구 내역을 출력한다.
       result.append(s"${playFor(performance).name}: ${amountFor(performance).usd} (${performance.audience}석)\n")
     }
 
     def totalAmount = {
       var result = 0
-      for (performance <- invoice.performances) {
+      for (performance <- data.performances) {
         result += amountFor(performance)
       }
       result
@@ -74,7 +74,7 @@ class Statement {
 
     def totalVolumeCredits = {
       var result = 0
-      for (performance <- invoice.performances) {
+      for (performance <- data.performances) {
         result += volumeCreditsFor(performance)
       }
       result
