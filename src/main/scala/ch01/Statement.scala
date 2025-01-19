@@ -56,15 +56,15 @@ class Statement {
     for (performance <- invoice.performances) {
       volumeCredit += volumeCreditsFor(performance)
       // 청구 내역을 출력한다.
-      result.append(s"${playFor(performance).name}: ${amountFor(performance).toDollar} (${performance.audience}석)\n")
+      result.append(s"${playFor(performance).name}: ${amountFor(performance).usd} (${performance.audience}석)\n")
       totalAmount += amountFor(performance)
     }
-    result.append(s"총액: ${totalAmount.toDollar}\n")
+    result.append(s"총액: ${totalAmount.usd}\n")
     result.append(s"적립 포인트: ${volumeCredit}점")
     result.toString
   }
 
   extension (amount: Int)
-    private def toDollar: String = "$%,.2f".format((amount / 100).toDouble)
+    private def usd: String = "$%,.2f".format((amount / 100).toDouble)
 }
 
