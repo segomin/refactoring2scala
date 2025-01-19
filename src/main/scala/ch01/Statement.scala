@@ -74,12 +74,9 @@ class StatementData(val customer: String, val performances: List[PerformancePlay
   }
 }
 
-def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays)
-
 class Statement {
-
   def statement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice.customer, invoice.performances.map(perf => enhancedPerformance(perf, plays)), plays)
+    val data = StatementData(invoice.customer, invoice.performances.map(perf => PerformancePlay(perf, plays)), plays)
     renderPlainText(data)
   }
 
