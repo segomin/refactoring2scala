@@ -1,91 +1,13 @@
 package org.sangho.refac2scala
 package ch01
 
-import scala.math.*
-
-case class Performance(playID: String, audience: Int)
-
-case class Invoice(customer: String, performances: List[Performance])
-
-// Scala 에서 Enumeration 을 사용하는 방법
-object PlayType extends Enumeration {
-  type Kind = Value
-  val TRAGEDY, COMEDY = Value
-}
-
-case class Play(name: String, kind: PlayType.Kind)
-
-class PerformancePlay(val perf: Performance, plays: Plays) {
-  val play: Play = plays.get(perf.playID)
-  val audience: Int = perf.audience
-  val amount: Int = amountFor(this)
-  val volumeCredits: Int = volumeCreditsFor(this)
-
-
-  def amountFor(perf: PerformancePlay): Int = {
-    var result = 0
-    perf.play.kind match {
-      case PlayType.TRAGEDY =>
-        result = 40000
-        if (perf.audience > 30) result += 1000 * (perf.audience - 30)
-
-      case PlayType.COMEDY =>
-        result = 30000
-        if (perf.audience > 20) result += 10000 + 500 * (perf.audience - 20)
-        result += 300 * perf.audience
-    }
-    result
-  }
-
-  def volumeCreditsFor(perf: PerformancePlay): Int = {
-    // 포인트를 적립한다.
-    var result = 0
-    result += Math.max(perf.audience - 30, 0)
-    // 희극 관객 5명마다 추가 포인트를 제공핟나.
-    if (perf.play.kind.eq(PlayType.COMEDY))
-      result += floor(perf.audience / 5).toInt
-    result
-  }
-}
-
-class Plays(plays: (String, Play)*) {
-  private val playMap: Map[String, Play] = Map(plays *)
-
-  def get(performance: String): Play = playMap(performance)
-}
-
-class StatementData(invoice: Invoice, val plays: Plays) {
-  val customer: String = invoice.customer
-  val performances: List[PerformancePlay] = invoice.performances.map(perf => PerformancePlay(perf, plays))
-  val totalAmount: Int = totalAmountFor(performances)
-  val totalVolumeCredits: Int = totalVolumeCreditsFor(performances)
-
-  def totalAmountFor(performances: List[PerformancePlay]) = {
-    var result = 0
-    for (performance <- performances) {
-      result += performance.amount
-    }
-    result
-  }
-
-  def totalVolumeCreditsFor(performances: List[PerformancePlay]) = {
-    var result = 0
-    for (performance <- performances) {
-      result += performance.volumeCredits
-    }
-    result
-  }
-}
-
 class Statement {
   def statement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice, plays)
-    renderPlainText(data)
+    renderPlainText(StatementData(invoice, plays))
   }
 
-  def statement2(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice, plays)
-    renderHtml(data)
+  def htmlStatement(invoice: Invoice, plays: Plays): String = {
+    renderHtml(StatementData(invoice, plays))
   }
 
   def renderPlainText(data: StatementData): String = {
