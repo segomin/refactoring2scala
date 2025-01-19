@@ -50,6 +50,7 @@ class PerformancePlay(val perf: Performance, plays: Plays) {
 
 class Plays(plays: (String, Play)*) {
   private val playMap: Map[String, Play] = Map(plays *)
+
   def get(performance: String): Play = playMap(performance)
 }
 
@@ -80,6 +81,11 @@ class Statement {
     renderPlainText(data)
   }
 
+  def htmlStatement(invoice: Invoice, plays: Plays): String = {
+    val data = StatementData(invoice.customer, invoice.performances.map(perf => PerformancePlay(perf, plays)), plays)
+    renderHtml(data)
+  }
+
   def renderPlainText(data: StatementData): String = {
     val result = new StringBuilder(s"청구내역 (고객명: ${data.customer})\n")
 
@@ -90,6 +96,19 @@ class Statement {
 
     result.append(s"총액: ${data.totalAmount.usd}\n")
     result.append(s"적립 포인트: ${data.totalVolumeCredits}점")
+    result.toString
+  }
+
+  def renderHtml(data: StatementData): String = {
+    val result = new StringBuilder(s"<h1>청구내역 (고객명: ${data.customer})</h1>\n")
+    result.append("<table>\n")
+    result.append("<tr><th>연극</th><th>좌석수</th><th>금액</th></tr>\n")
+    for (performance <- data.performances) {
+      result.append(s"<tr><td>${performance.play.name}</td><td>${performance.audience}석</td><td>${performance.amount.usd}</td></tr>\n")
+    }
+    result.append("</table>\n")
+    result.append(s"<p>총액: <em>${data.totalAmount.usd}</em></p>\n")
+    result.append(s"<p>적립 포인트: <em>${data.totalVolumeCredits}</em>점</p>")
     result.toString
   }
 
