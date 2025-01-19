@@ -4,11 +4,11 @@ package ch01
 import scala.math.*
 
 trait PerformanceCalculator:
-  def amountFor(perf: PerformancePlay): Int
-  def volumeCreditsFor(perf: PerformancePlay): Int
+  def amountFor(perf: Performance): Int
+  def volumeCreditsFor(perf: Performance): Int
 
-object PerformanceCalculatorFactory:
-  def createCalculator(play: Play): PerformanceCalculator = {
+object PerformanceCalculatorCreator:
+  def calculatorOf(play: Play): PerformanceCalculator = {
     play.kind match {
       case PlayType.TRAGEDY => TragedyCalculator
       case PlayType.COMEDY => ComedyCalculator
@@ -16,13 +16,13 @@ object PerformanceCalculatorFactory:
   }
 
 object TragedyCalculator extends PerformanceCalculator:
-  def amountFor(perf: PerformancePlay): Int = {
+  def amountFor(perf: Performance): Int = {
     var result = 40000
     if (perf.audience > 30) result += 1000 * (perf.audience - 30)
     result
   }
 
-  def volumeCreditsFor(perf: PerformancePlay): Int = {
+  def volumeCreditsFor(perf: Performance): Int = {
     // 포인트를 적립한다.
     var result = 0
     result += Math.max(perf.audience - 30, 0)
@@ -30,14 +30,14 @@ object TragedyCalculator extends PerformanceCalculator:
   }
 
 object ComedyCalculator extends PerformanceCalculator:
-  def amountFor(perf: PerformancePlay): Int = {
+  def amountFor(perf: Performance): Int = {
     var result = 30000
     if (perf.audience > 20) result += 10000 + 500 * (perf.audience - 20)
     result += 300 * perf.audience
     result
   }
 
-  def volumeCreditsFor(perf: PerformancePlay): Int = {
+  def volumeCreditsFor(perf: Performance): Int = {
     // 포인트를 적립한다.
     var result = 0
     result += Math.max(perf.audience - 30, 0)

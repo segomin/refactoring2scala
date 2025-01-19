@@ -18,8 +18,8 @@ case class Play(name: String, kind: PlayType.Kind)
 class PerformancePlay(val perf: Performance, plays: Plays) {
   val play: Play = plays.get(perf.playID)
   val audience: Int = perf.audience
-  val amount: Int = PerformanceCalculatorFactory.createCalculator(play).amountFor(this)
-  val volumeCredits: Int = PerformanceCalculatorFactory.createCalculator(play).volumeCreditsFor(this)
+  val amount: Int = PerformanceCalculatorCreator.calculatorOf(play).amountFor(perf)
+  val volumeCredits: Int = PerformanceCalculatorCreator.calculatorOf(play).volumeCreditsFor(perf)
 }
 
 class Plays(plays: (String, Play)*) {
