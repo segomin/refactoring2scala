@@ -15,17 +15,21 @@ object PlayType extends Enumeration {
 
 case class Play(name: String, kind: PlayType.Kind)
 
+class PerformancePlay(val perf: Performance, val play: Play)
+
 class Plays(plays: (String, Play)*) {
   private val playMap: Map[String, Play] = Map(plays *)
   def get(performance: String): Play = playMap(performance)
 }
 
-case class StatementData(customer: String, performances: List[Performance], plays: Plays)
+case class StatementData(customer: String, performances: List[PerformancePlay], plays: Plays)
+
+def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays.get(perf.playID))
 
 class Statement {
 
   def statement(invoice: Invoice, plays: Plays): String = {
-    val data = StatementData(invoice.customer, invoice.performances, plays)
+    val data = StatementData(invoice.customer, invoice.performances.map(perf => enhancedPerformance(perf, plays)), plays)
     renderPlainText(data, plays)
   }
 
@@ -62,13 +66,13 @@ class Statement {
 
     for (performance <- data.performances) {
       // 청구 내역을 출력한다.
-      result.append(s"${playFor(performance, plays).name}: ${amountFor(performance, plays).usd} (${performance.audience}석)\n")
+      result.append(s"${playFor(performance.perf, plays).name}: ${amountFor(performance.perf, plays).usd} (${performance.perf.audience}석)\n")
     }
 
     def totalAmount = {
       var result = 0
       for (performance <- data.performances) {
-        result += amountFor(performance, plays)
+        result += amountFor(performance.perf, plays)
       }
       result
     }
@@ -76,7 +80,7 @@ class Statement {
     def totalVolumeCredits = {
       var result = 0
       for (performance <- data.performances) {
-        result += volumeCreditsFor(performance, plays)
+        result += volumeCreditsFor(performance.perf, plays)
       }
       result
     }
