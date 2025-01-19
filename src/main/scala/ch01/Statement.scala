@@ -53,7 +53,18 @@ class Plays(plays: (String, Play)*) {
   def get(performance: String): Play = playMap(performance)
 }
 
-case class StatementData(customer: String, performances: List[PerformancePlay], plays: Plays)
+class StatementData(val customer: String, val performances: List[PerformancePlay], val plays: Plays) {
+  val totalAmount: Int = totalAmountFor(performances)
+
+  def totalAmountFor(performances: List[PerformancePlay]) = {
+    var result = 0
+    for (performance <- performances) {
+      result += performance.amount
+    }
+    result
+  }
+
+}
 
 def enhancedPerformance(perf: Performance, plays: Plays): PerformancePlay = new PerformancePlay(perf, plays)
 
@@ -72,15 +83,15 @@ class Statement {
       result.append(s"${performance.play.name}: ${performance.amount.usd} (${performance.perf.audience}석)\n")
     }
 
-    def totalAmount = {
+    def totalAmount(performances: List[PerformancePlay]) = {
       var result = 0
-      for (performance <- data.performances) {
+      for (performance <- performances) {
         result += performance.amount
       }
       result
     }
 
-    def totalVolumeCredits = {
+    def totalVolumeCredits(performances: List[PerformancePlay]) = {
       var result = 0
       for (performance <- data.performances) {
         result += performance.volumeCredits
@@ -88,8 +99,8 @@ class Statement {
       result
     }
 
-    result.append(s"총액: ${totalAmount.usd}\n")
-    result.append(s"적립 포인트: ${totalVolumeCredits}점")
+    result.append(s"총액: ${totalAmount(data.performances).usd}\n")
+    result.append(s"적립 포인트: ${totalVolumeCredits(data.performances)}점")
     result.toString
   }
 
