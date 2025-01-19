@@ -58,10 +58,15 @@ class Statement {
       totalAmount += amountFor(performance)
     }
 
-    var volumeCredit = 0
-    for (performance <- invoice.performances) {
-      volumeCredit += volumeCreditsFor(performance)
+    def totalVolumeCredits = {
+      var volumeCredit = 0
+      for (performance <- invoice.performances) {
+        volumeCredit += volumeCreditsFor(performance)
+      }
+      volumeCredit
     }
+
+    val volumeCredit: Int = totalVolumeCredits
     result.append(s"총액: ${totalAmount.usd}\n")
     result.append(s"적립 포인트: ${volumeCredit}점")
     result.toString
