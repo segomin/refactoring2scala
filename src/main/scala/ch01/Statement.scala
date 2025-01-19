@@ -15,7 +15,9 @@ object PlayType extends Enumeration {
 
 case class Play(name: String, kind: PlayType.Kind)
 
-class PerformancePlay(val perf: Performance, val play: Play)
+class PerformancePlay(val perf: Performance, val play: Play) {
+  val audience: Int = perf.audience
+}
 
 class Plays(plays: (String, Play)*) {
   private val playMap: Map[String, Play] = Map(plays *)
@@ -33,9 +35,9 @@ class Statement {
     renderPlainText(data, plays)
   }
 
-  def amountFor(perf: Performance, plays: Plays): Int = {
+  def amountFor(perf: PerformancePlay): Int = {
     var result = 0
-    playFor(perf, plays).kind match {
+    perf.play.kind match {
       case PlayType.TRAGEDY =>
         result = 40000
         if (perf.audience > 30) result += 1000 * (perf.audience - 30)
@@ -48,14 +50,12 @@ class Statement {
     result
   }
 
-  def playFor(performance: Performance, plays: Plays): Play = plays.get(performance.playID)
-
-  def volumeCreditsFor(perf: Performance, plays: Plays): Int = {
+  def volumeCreditsFor(perf: PerformancePlay): Int = {
     // 포인트를 적립한다.
     var result = 0
     result += Math.max(perf.audience - 30, 0)
     // 희극 관객 5명마다 추가 포인트를 제공핟나.
-    if (playFor(perf, plays).kind.eq(PlayType.COMEDY))
+    if (perf.play.kind.eq(PlayType.COMEDY))
       result += floor(perf.audience / 5).toInt
     result
   }
@@ -66,13 +66,13 @@ class Statement {
 
     for (performance <- data.performances) {
       // 청구 내역을 출력한다.
-      result.append(s"${playFor(performance.perf, plays).name}: ${amountFor(performance.perf, plays).usd} (${performance.perf.audience}석)\n")
+      result.append(s"${performance.play.name}: ${amountFor(performance).usd} (${performance.perf.audience}석)\n")
     }
 
     def totalAmount = {
       var result = 0
       for (performance <- data.performances) {
-        result += amountFor(performance.perf, plays)
+        result += amountFor(performance)
       }
       result
     }
@@ -80,7 +80,7 @@ class Statement {
     def totalVolumeCredits = {
       var result = 0
       for (performance <- data.performances) {
-        result += volumeCreditsFor(performance.perf, plays)
+        result += volumeCreditsFor(performance)
       }
       result
     }
