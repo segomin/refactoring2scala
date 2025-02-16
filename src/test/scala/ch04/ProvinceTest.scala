@@ -19,3 +19,8 @@ class ProvinceTest extends munit.FunSuite:
     val asia = sampleProvinceData
     assertEquals(asia.shortfall, 5)
   }
+
+  test("profit") {
+    val asia = sampleProvinceData
+    assertEquals(asia.profit, 230)
+  }
