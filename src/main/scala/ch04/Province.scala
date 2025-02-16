@@ -24,6 +24,23 @@ class Province(
   })
 
   def shortfall: Int = demand - totalProduction
+
+  def profit: Int = demandValue - demandCost
+
+  def demandValue: Int = satisfiedDemand * price
+
+  def satisfiedDemand: Int = Math.min(demand, totalProduction)
+
+  def demandCost: Int = {
+    var remainingDemand = demand
+    var result = 0
+    producers.sortBy(_.cost).foreach(p => {
+      val contribution = Math.min(remainingDemand, p.production)
+      remainingDemand -= contribution
+      result += contribution * p.cost
+    })
+    result
+  }
 }
 
 /**
