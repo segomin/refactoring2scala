@@ -33,20 +33,16 @@ class Province(
   def satisfiedDemand: Int = Math.min(demand, totalProduction)
 
   def demandCost: Int = {
-    var remainingDemand = demand
-    var result = 0
-    producers.sortBy(_.cost).foreach(p => {
+    producers.foldLeft((demand, 0)) { case ((remainingDemand, result), p) =>
       val contribution = Math.min(remainingDemand, p.production)
-      remainingDemand -= contribution
-      result += contribution * p.cost
-    })
-    result
+      (remainingDemand - contribution, result + contribution * p.cost)
+    }._2
   }
 }
 
 /**
-  * 생산자
-  */
+ * 생산자
+ */
 class Producer(val name: String, val cost: Int, var production: Int = 0) {
   var province: Province = _
 
