@@ -13,15 +13,14 @@ package ch04
 class Province(
                 val name: String,
                 var demand: Int,
-                var price: Int,
+                val price: Int,
+                var totalProduction: Int = 0,
+                val producers: List[Producer] = List()
               ) {
-  var totalProduction: Int = 0
-  var producers: List[Producer] = List()
 
   def addProducer(producer: Producer) = {
     producer.province = this
-    producers = producer :: producers
-    totalProduction += producer.production
+    copy(name, demand, price, totalProduction + producer.production, producer :: producers)
   }
 
   def shortfall: Int = demand - totalProduction
@@ -38,6 +37,14 @@ class Province(
       (remainingDemand - contribution, result + contribution * p.cost)
     }._2
   }
+
+  def copy(name: String = this.name,
+           demand: Int = this.demand,
+           price: Int = this.price,
+           totalProduction: Int = this.totalProduction,
+           producers: List[Producer] = this.producers) = {
+    new Province(name, demand, price, totalProduction, producers)
+  }
 }
 
 /**
@@ -49,7 +56,7 @@ class Producer(val name: String, val cost: Int, var production: Int = 0) {
   def profit() = production - cost
 
   def setProduction(amount: Int = 0) = {
-    val newProduction = amount
+    val newProduction = amount + 100
     province.totalProduction += newProduction - production
     production = newProduction
   }
