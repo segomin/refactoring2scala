@@ -19,13 +19,13 @@ class ProvinceTest extends munit.FunSuite:
   }
 
   test("zero demand") {
-    asia.demand = 0
+    asia = asia.copy(demand = 0)
     assertEquals(asia.shortfall, -25)
     assertEquals(asia.profit, 0)
   }
 
   test("negative demand") {
-    asia.demand = -1
+    asia = asia.copy(demand = -1)
     assertEquals(asia.shortfall, -26)
     assertEquals(asia.profit, -10)
   }

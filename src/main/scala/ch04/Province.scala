@@ -12,9 +12,9 @@ package ch04
  */
 class Province(
                 val name: String,
-                var demand: Int,
+                val demand: Int,
                 val price: Int,
-                var totalProduction: Int = 0,
+                val totalProduction: Int = 0,
                 val producers: List[Producer] = List()
               ) {
 
@@ -50,14 +50,8 @@ class Province(
 /**
  * 생산자
  */
-class Producer(val name: String, val cost: Int, var production: Int = 0) {
+class Producer(val name: String, val cost: Int, val production: Int = 0) {
   var province: Province = _
 
   def profit() = production - cost
-
-  def setProduction(amount: Int = 0) = {
-    val newProduction = amount + 100
-    province.totalProduction += newProduction - production
-    production = newProduction
-  }
 }
