@@ -385,7 +385,47 @@ IDE 기능으로 바로 처리하고, 안되는 경우 1변 과정을 검토해 
 
 ## 6.6 변수 캡슐화하기
 
+```diff javascript
+// 억지로 scala 로 만들기 어색하여 javascript 그대로 사용
+- let defaultOwner = {firstName: "마틴", lastName: "파울러"};
++ let defaultWonerData = {firstName: "마틴", lastName: "파울러"};
++ export function defaultOwner() {return defaultOwnerData;}
++ export function setDefaultOwner(arg) {defaultOwnerData = arg;}
+```
+
+> [!NOTE]
+> 데이터의 유효범위가 넓을수록 캡슐화해야 한다.
+
+유효범위가 넓은 범위의 데이터는 다루기가 어렵기 때문에 함수로 먼저 감싸서 재구성 하는 방식을 사용한다.
+
+> 불변 데이터는 가변 데이터보다 캡슐화 할 이유가 적다. 
+어떤 이유에서인지 JAVA 나 다른 정적타입 언어에서 불변 데이터의 경우도 필드를 public 으로 하기 보다는 getter 를 선호하는 경향이 있다. 
+
+> [절차]
+> 1. 변수로의 접근과 갱신을 전담하는 캡슐화 함수들 생성
+> 2. 정적 검사를 수행 (javascript 등과 같은 동적 언어에서 매개변수의 type 검사를 말하는 듯)
+> 3. 직접 변수를 참조하던 부분을 함수 호출로 변경
+> 4. 변수의 접근 범위를 제한
+> 5. 테스트
+> 6. 변수 값이 레코드라면 레코드 캡슐화하기 고려
+
+예시에서 나오는 1~4 까지 과정은 어차피 값의 수정권한을 다 제공하기 때문에 
+`값 캡슐화하기` 나 `레코드 캡슐화하기`를 함께 해야 의미있어 보인다.
+
+Getter 는 주로 데이터의 복제본을 반환하도록 수정하는게 좋다고 한다. 
+심지어 Setter 에서도 복제본을 만드는 경우를 추천한다. 
+[함수형 코딩](https://product.kyobobook.co.kr/detail/S000001952246) 책에서는 이를 
+`방어적 복사`라고 하면서 불변성이 유지되는 안전지대를 만들기 위해 사용한다.
+
+실무에서 List 나 가변객체를 사용할 경우 이렇게 까지 하지는 않지만, 
+복잡한 레거시 시스템 내에서는 필요한 경우도 있을듯 싶다.
+
 ## 6.7 변수 이름 바꾸기
+
+```diff javascript
+- val a = height * width
++ val area = height * width
+```
 
 ## 6.8 매개변수 객체 만들기
 
