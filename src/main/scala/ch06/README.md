@@ -427,10 +427,287 @@ Getter 는 주로 데이터의 복제본을 반환하도록 수정하는게 좋�
 + val area = height * width
 ```
 
+> 명확한 프로그래밍의 핵심은 이름짓기다.
+>
+> 함수 호출 한 번으로 끝나지 않고 값이 영속되는 필드라면 이름에 더 신경 써야 한다.
+
+> [절차]
+> 1. 폭넓게 쓰이는 변수라면 변수 캡슐화하기를 고려한다.
+> 2. 이름을 바꿀 변수를 참조하는 곳을 모두 찾아서, 하나씩 변경한다.
+> 3. 테스트 한다.
+
+*이 장의 정확한 의도를 이해하지는 못했지만, 중요해 보이지는 않는다.*
+
 ## 6.8 매개변수 객체 만들기
+
+```diff
+- def amountInvoiced(startDate: OffsetDateTime, endDate: OffsetDateTime): Double - def amountReceived(startDate: OffsetDateTime, endDate: OffsetDateTime): Double
+- def amountOverdue(startDate: OffsetDateTime, endDate: OffsetDateTime): Double
++ def amountInvoiced(dateRange: DateRange): Double
++ def amountReceived(dateRange: DateRange): Double
++ def amountOverdue(dateRange: DateRange): Double
+```
+
+> 데이터 뭉치를 데이터 구조로 묶으면 데이터 사이의 관계가 명확해진다.
+>
+> 이 리펙터링의 진정한 힘은 코드를 더 근본적으로 바꿔준다는 데 있다.
+>
+> 데이터 구조에 담길 데이터에 공통으로 적용되는 동작을 추출해서 함수로 만드는 것이다.
+>
+> 클래스로 만들 수도 있다.
+
+*정적 타입 언어에서는 타임 안정성을 높이는 장점도 있다.*
+
+> [절차]
+> 1. 데이터 뭉치를 담을 클래스를 만든다. (없는 경우)
+> 2. 테스트한다
+> 3. 함수 선언 바꾸기로 새 데이터 구조를 매개변수로 추가한다.
+> 4. 테스트한다
+> 5. 함수 호출 시 새로운 데이터 구조 인스턴스를 넘기도록 수정한다.
+> 6. 기존 매개변수를 사용하던 코드를 새 데이터 구조를 사용하도록 수정한다.
+> 7. 다 바꿨다면 기존 매개변수를 제거하고 테스트한다
+
+```diff
+// 예시: 매개변수 객체 만들기
+// 1. 데이터 뭉치를 담을 클래스를 만든다.
+- def readingsOutsideRange(station: Station, min: Int, max: Int): List[Reading] =
++ def readingsOutsideRange(station: Station, min: Int, max: Int, range: NumberRange): List[Reading] =
+      station.readings.filter(r => r.temp < min || r.temp > max)
+
++ case class NumberRange(min: Int, max: Int)
+
+// 3. 함수 선언 바꾸기로 새 데이터 구조를 매개변수로 추가한다.
+ def readingsOutsideRange(station: Station, min: Int, max: Int, range: NumberRange): List[Reading] =
+-    station.readings.filter(r => r.temp < min || r.temp > max)
++    station.readings.filter(r => r.temp < range.min || r.temp > range.max)
+
+// 6. 기존 매개변수를 사용하던 코드를 새 데이터 구조를 사용하도록 수정한다.
+- def readingsOutsideRange(station: Station, min: Int, max: Int, range: NumberRange): List[Reading] =
++ def readingsOutsideRange(station: Station, range: NumberRange): List[Reading] =
+    station.readings.filter(r => r.temp < range.min || r.temp > range.max)
+```
+
+> [!NOTE]
+> 진정한 값 객체로 거듭나기
+> ```diff
+>  def readingsOutsideRange(station: Station, range: NumberRange): List[Reading] =
+> -  station.readings.filter(r => r.temp < range.min || r.temp > range.max)
+> +  station.readings.filter(r => !range.contains(r.temp))
+>  case class NumberRange(min: Int, max: Int) {
+> +   def contains(arg: Int): Boolean = arg < min || arg > max
+> + }
+> ```
+> 클래스로 만들어두면 관련 동작들을 이 클래스로 옮길 수 있다는 이점이 생긴다.
 
 ## 6.9 여러 함수를 클래스로 묶기
 
+```diff
+- def base(reading: Reading): Double = { ... }
+- def taxableCharge(reading: Reading): Double = { ... }
+- def calculateBaseCharge(reading: Reading): Double = { ... }
++ case class Reading(reading: Reading) {
++   def base: Double = { ... }
++   def taxableCharge: Double = { ... }
++   def calculateBaseCharge: Double = { ... }
++ }
+```
+
+> 클래스로 묶을 때의 두드러진 장점은 클라이언트가 객체의 핵심 데이터를 변경할 수 있고, 파생 객체들을 일관되게 관리할 수 있다.
+> 
+> 나는 중첩 함수보다 클래스로 묶는 것을 선호하는 편인데, 중첩 함수는 테스트하기가 까다로울 수 있기 때문이다.
+
+> [절차]
+> 1. 함수들이 공유하는 공통 데이터 레코드를 캡슐화한다.
+> 2. 공통 레코드를 사용하는 함수들을 새 클래스로 옮긴다.
+> 3. 데이터를 조작하는 로직들은 함수로 추출해서 새 클래스로 옮긴다.
+
+> 함수를 데이터 처리 코드 가가이에 둔다. 그러기 위해 좋은 방법으로, 데이터를 클래스로 만들 수 있다.
+
+```diff
+// 예시: 여러 함수를 클래스로 묶기
+// 1. 함수들이 공유하는 공통 데이터 레코드를 캡슐화한다.
+- val reading = acquireReading()
+- val baseCharge = calculateBaseCharge(reading)
++ val rawReading = acquireReading()
++ val reading = new Reading(rawReading)
++ val basicChargeAmount = reading.baseCharge
+- def calculateBaseCharge(reading: Reading): Double = { ... }
++ class Reading(rawReading: Map[String, String]) {
++   val customer: String = rawReading("customer")
++   val quantity: Int = rawReading("quantity").toInt
++   val month: Int = rawReading("month").toInt
++   val year: Int = rawReading("year").toInt  
++   def baseCharge: Double = { ... }
++ }
+```
+
+> 이렇게 이름을 바꾸고 나면 Reading 클래스의 클라이언트는 baseCharge가 필드인지, 계산된값(함수 호출)인지 구분할 수 없다.
+> 이는 단일 접근원칙<sup>Uniform Access Principle</sup>을 따르는 것이다.
+
+*단일 접근원칙은 자바만 사용하면 다소 어색할 수 있는 부분인듯 하다.*
+
+파생 데이터를 필요한 시점에 계산되게 만들면 가변 데이터를 사용하더라도 문제가 생기지 않는다. 
+이처럼 데이터 갱신 가능성이 있을 때는 클래스로 묶어두면 큰 도움이 된다.
+
 ## 6.10 여러 함수를 변환 함수로 묶기
 
+```diff
+ def base(reading: Reading): Double = { ... }
+ def taxableCharge(reading: Reading): Double = { ... }
++ def enrichReading(argReading: Reading): Reading = {
++  val result = argReading.clone()
++  result.baseCharge = base(argReading)
++  result.taxableCharge = taxableCharge(argReading)
++  return result
++ }
+```
+> 변환 함수는 원본 데이터를 입력받아서 필요한 정보를 모두 도출한 뒤, 각각을 출력 데이터의 필드에 넣어 반환한다. 
+
+위 에시는 최소한 스칼라 스럽진 않다. 스칼라나 코틀린에서는 copy 함수를 사용할 것이다.
+
+```scala
+// scala
+def enrichReading(argReading: Reading): Reading = argReading.copy(
+    baseCharge = base(argReading),
+    taxableCharge = taxableCharge(argReading)
+)
+
+```kotlin
+// kotlin
+fun enrichReading(argReading: Reading): Reading = argReading.copy(
+    baseCharge = base(argReading),
+    taxableCharge = taxableCharge(argReading)
+)
+```
+
+다만, 여기서 저자의 의도는 정적언어에서는 새로운 클래스로 변환하는 것일 것이고, 
+데이터 구조와 이를 사용하는 함수를 한 곳에 모아두는 것이다.
+
+> [절차]
+> 1. 변환할 레코드를 입력받아서 값을 그대로 반환하는 변환 함수를 ㅁ나든다.
+> 2. 묶을 함수 중 함수 하나를 골라서 본문 코드를 변환 함수로 옮기고, 처리 결과를 레코드에 새 필드로 기록한다. 그리고 클라이언트 코드가 이 필드를 사용하도록 수정한다.
+> 3. 테스트한다.
+> 4. 나머지 함수도 위 과정을 따라 처리한다.
+
+```scala
+// 클라이언트 3...
+val reading = acquireReading()
+val baseCharge = calculateBaseCharge(reading)
+def calculateBaseCharge(reading: Reading): Double = {
+  return baseRage(reading.month, reading.year) * reading.quantity
+}
+```
+```diff
+// 1. 우선 입력 객체를 그대로 복사해 반환
++ def enrichReading(argReading: Reading): Reading = {
++  val result = argReading.clone()
++  return result
++ } 
+
+// 2. 변경하려는 계산로직 하나를 골라서 부가 정보를 덧붓이고, 클라이언트가 이를 사용하도록 수정
+- val reading = acquireReading()
++ val rawReading = acquireReading()
++ val reading = enrichReading(rawReading)
+- val baseCharge = calculateBaseCharge(reading)
++ val baseCharge = reading.baseCharge
+
+def enrichReading(argReading: Reading): Reading = {
+  val result = argReading.clone()
++  result.baseCharge = calculateBaseCharge(argReading)
+  return result
+}
+
+```
+
+> [!TIIP]
+> 본질은 같고 부가 정보만 덧붙이는 변환 함수의 이름을 'enrich'라 하고, 형태가 변할 때만 'transform'이라는 이름을 쓴다.
+
 ## 6.11 단계 쪼개기
+
+```diff
+- val orderData = orderString.split("\\s+")
+- val productPrice = priceList[orderData[0].split("-")[1]]
+- val orderPrice = orderData[1].toInt * productPrice
++ val orderRecord = parseOrder(orderString)
++ val orderPrice = price(orderRecord, priceList)
++ case class OrderRecord(product: String, quantity: Int)
++ def parseOrder(orderString: String): OrderRecord = {
++   val data = orderString.split("\\s+")
++   return new OrderRecord(data[0], data[1].toInt)
++ }
++ def price(orderRecord: OrderRecord, priceList: Map[String, Int]): Int = {
++   return orderRecord.quantity * priceList(orderRecord.product)
++ }
+```
+
+> 서로 다른 두 대상을 한꺼번에 다루는 코드를 발견하면, 각각을 별개 모듈로 분리한다.
+> 코드를 수정해야 할 때 두 대상을 동시에 생각할 필요 없이 하나에만 집중하기 위해서다.
+> (SRP?)
+> 
+> 다른 단계로 볼 수 있는 코드 영역들이 마침 서로 다른 데이터와 함수를 사용한다면 단계 쪼개기에 적합하다는 뜻이다.
+
+> [절차]
+> 1. 두 번째 단계에 해당하는 코드를 독립 함수로 추출한다.
+> 2. 테스트한다.
+> 3. 중간 데이터 구조를 만들어서 앞에서 추출한 함수의 인수로 추가한다.
+> 4. 테스트한다.
+> 5. 추출한 두 번째 단계 함수의 매개변수를 하나씩 검토한다. 
+> 그중 첫 번째 단계에서 사용되는 것은 중간 데이터 구조로 옮긴다.
+> 6. 첫 번째 단계 코드를 함수로 추출하면서 중간 데이터 구조를 반환하도록 만든다.
+
+```scala
+// 상품의 결제 금액을 계산하는 코드
+def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
+  val basePrice = product.basePrice * quantity
+  val discount = Math.max(quantity - product.discountThreshold, 0) 
+         * product.basePrice * product.discountRate
+  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) basePrice * shippingPerCaseRate else 0
+  val shippingCost = quantity * shippingPerCase
+  val price = basePrice - discount + shippingCost
+  return price
+}
+```
+```diff
+// 1. 먼저 배송비 계산 코드를 함수로 추출
+def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
+  val basePrice = product.basePrice * quantity
+  val discount = Math.max(quantity - product.discountThreshold, 0) 
+         * product.basePrice * product.discountRate
+-  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) basePrice * shippingPerCaseRate else 0
+-  val shippingCost = quantity * shippingPerCase
+-  val price = basePrice - discount + shippingCost
++  val price = applyShipping(basePrice, shippingMethod, quantity, discount)
+  return price
+}
++ def applyShipping(basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
++  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
++  val shippingCost = quantity * shippingPerCase
++  val price basePrice - discount + shippingCost
++  return price
++ }
+
+// 3. 중간 데이터 구조를 만들어서 앞에서 추출한 함수의 인수로 추가
++ case class PriceData(basePrice: Int, discount: Int, shippingCost: Int)
+def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
+  val basePrice = product.basePrice * quantity
+  val discount = Math.max(quantity - product.discountThreshold, 0) 
+         * product.basePrice * product.discountRate
++ val priceData = PriceData(basePrice, discount, applyShipping(basePrice, quantity, discount))
+-  val price = applyShipping(basePrice, shippingMethod, quantity, discount)
++  val price = applyShipping(priceData, basePrice, shippingMethod, quantity, discount)
+  return price
+}
+
+- def applyShipping(basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
++ def applyShipping(priceData: PriceData, basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
+-  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
++  val shippingPerCase = if (priceData.basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
+-  val shippingCost = quantity * shippingPerCase
++  val shippingCost = quantity * shippingPerCase
+-  val price basePrice - discount + shippingCost
++  val price = priceData.basePrice - priceData.discount + shippingCost
+  return price
+- }
+
+
+```
