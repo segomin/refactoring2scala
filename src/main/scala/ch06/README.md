@@ -571,7 +571,7 @@ def enrichReading(argReading: Reading): Reading = argReading.copy(
     baseCharge = base(argReading),
     taxableCharge = taxableCharge(argReading)
 )
-
+```
 ```kotlin
 // kotlin
 fun enrichReading(argReading: Reading): Reading = argReading.copy(
@@ -656,15 +656,18 @@ def enrichReading(argReading: Reading): Reading = {
 > 6. 첫 번째 단계 코드를 함수로 추출하면서 중간 데이터 구조를 반환하도록 만든다.
 
 ```scala
+case class Product(basePrice: Int, discountThreshold: Int, discountRate: Double)
+case class ShippingMethod(discountThreshold: Int, discountFee: Int, feePerCase: Int)
+
 // 상품의 결제 금액을 계산하는 코드
 def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
   val basePrice = product.basePrice * quantity
   val discount = Math.max(quantity - product.discountThreshold, 0) 
          * product.basePrice * product.discountRate
-  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) basePrice * shippingPerCaseRate else 0
+  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountFee else shippingMethod.feePerCase
   val shippingCost = quantity * shippingPerCase
   val price = basePrice - discount + shippingCost
-  return price
+  price.toInt
 }
 ```
 ```diff
@@ -672,42 +675,40 @@ def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod):
 def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
   val basePrice = product.basePrice * quantity
   val discount = Math.max(quantity - product.discountThreshold, 0) 
-         * product.basePrice * product.discountRate
--  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) basePrice * shippingPerCaseRate else 0
+      * product.basePrice * product.discountRate
+-  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountFee else shippingMethod.feePerCase
 -  val shippingCost = quantity * shippingPerCase
 -  val price = basePrice - discount + shippingCost
-+  val price = applyShipping(basePrice, shippingMethod, quantity, discount)
-  return price
+-  price.toInt
++  applyShipping(basePrice, shippingMethod, quantity, discount.toInt)
 }
 + def applyShipping(basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
-+  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
++  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountFee else shippingMethod.feePerCase
 +  val shippingCost = quantity * shippingPerCase
-+  val price basePrice - discount + shippingCost
-+  return price
++  val price = basePrice - discount + shippingCost
++  price.toInt
 + }
 
 // 3. 중간 데이터 구조를 만들어서 앞에서 추출한 함수의 인수로 추가
-+ case class PriceData(basePrice: Int, discount: Int, shippingCost: Int)
++ case class PriceData(quantity: Int, basePrice: Int, discount: Int)
 def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
   val basePrice = product.basePrice * quantity
   val discount = Math.max(quantity - product.discountThreshold, 0) 
-         * product.basePrice * product.discountRate
-+ val priceData = PriceData(basePrice, discount, applyShipping(basePrice, quantity, discount))
--  val price = applyShipping(basePrice, shippingMethod, quantity, discount)
-+  val price = applyShipping(priceData, basePrice, shippingMethod, quantity, discount)
-  return price
+      * product.basePrice * product.discountRate
++  val priceData = PriceData(quantity, basePrice, discount.toInt)
+-  applyShipping(basePrice, shippingMethod, quantity, discount.toInt)
++  applyShipping(priceData, shippingMethod)
 }
 
 - def applyShipping(basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
-+ def applyShipping(priceData: PriceData, basePrice: Int, shippingMethod: ShippingMethod, quantity: Int, discount: Int): Int = {
--  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
-+  val shippingPerCase = if (priceData.basePrice > shippingMethod.discountThreshold) shippingMethod.discountedFee else shippingMethod.feePerCase
++ def applyShipping(priceData: PriceData, shippingMethod: ShippingMethod): Int = {
+-  val shippingPerCase = if (basePrice > shippingMethod.discountThreshold) shippingMethod.discountFee else shippingMethod.feePerCase
++  val shippingPerCase = if (priceData.basePrice > shippingMethod.discountThreshold) shippingMethod.discountFee else shippingMethod.feePerCase
 -  val shippingCost = quantity * shippingPerCase
-+  val shippingCost = quantity * shippingPerCase
++  val shippingCost = priceData.quantity * shippingPerCase
 -  val price basePrice - discount + shippingCost
 +  val price = priceData.basePrice - priceData.discount + shippingCost
-  return price
+  price.toInt
 - }
-
 
 ```
