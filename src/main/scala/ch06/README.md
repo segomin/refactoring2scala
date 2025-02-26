@@ -689,7 +689,7 @@ def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod):
 +  price.toInt
 + }
 
-// 3. 중간 데이터 구조를 만들어서 앞에서 추출한 함수의 인수로 추가
+// 3~6. 중간 데이터 구조를 만들어서 앞에서 추출한 함수의 인수로 추가
 + case class PriceData(quantity: Int, basePrice: Int, discount: Int)
 def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
   val basePrice = product.basePrice * quantity
@@ -711,4 +711,288 @@ def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod):
   price.toInt
 - }
 
+// 6. 첫 번째 단계 코드를 함수로 추출하면서 중간 데이터 구조를 반환하도록 만든다.
++ def calculatePriceData(product: Product, quantity: Int): PriceData = {
++  val basePrice = product.basePrice * quantity
++  val discount = Math.max(quantity - product.discountThreshold, 0)
++      * product.basePrice * product.discountRate
++  PriceData(quantity, basePrice, discount.toInt)
++ }
+def priceOrder(product: Product, quantity: Int, shippingMethod: ShippingMethod): Int = {
+-  val basePrice = product.basePrice * quantity
+-  val discount = Math.max(quantity - product.discountThreshold, 0)
+-      * product.basePrice * product.discountRate
+-  val priceData = PriceData(quantity, basePrice, discount.toInt)
++  val priceData = calculatePriceData(product, quantity)
+  applyShipping(priceData, shippingMethod)
+}
+```
+
+예시: 명령줄 프로그램 쪼개기 (스칼라)
+```scala
+def main(args: Array[String]): Unit = {
+  try {
+    if (args.isEmpty) {
+      throw new IllegalArgumentException("파일명을 입력하세요.")
+    }
+    val fileName = args.last
+    val input = Paths.get(fileName).toFile
+    val mapper = new ObjectMapper()
+    val orders = mapper.readValue(input, classOf[Array[Order]])
+    if (args.contains("-r")) {
+      println(orders.count(_.status == "ready"))
+    } else {
+      println(orders.length)
+    }
+  } catch {
+    case e: Exception => {
+      System.err.println(e)
+      System.exit(1)
+    }
+  }
+}
+```
+
+리펙토링을 위해 단계를 쪼개기 전에 테스트가 가능하도록 코드를 수정
+
+* 핵심 작업 코드를 전부 추출
+```diff
+def main(args: Array[String]): Unit = {
+  try {
+-   if (args.isEmpty) {
+-     throw new IllegalArgumentException("파일명을 입력하세요.")
+-   }
+-   val fileName = args.last
+-   val input = Paths.get(fileName).toFile
+-   val mapper = new ObjectMapper()
+-   val orders = mapper.readValue(input, classOf[Array[Order]])
+-   if (args.contains("-r")) {
+-     println(orders.count(_.status == "ready"))
+-   } else {
+-     println(orders.length)
+-   }
++   run(args)
+  } catch {
+    case e: Exception => {
+      System.err.println(e)
+      System.exit(1)
+    }
+  }
+}
++ def run(args: Array[String]): Unit = {
++   if (args.isEmpty) {
++     throw new IllegalArgumentException("파일명을 입력하세요.")
++   }
++   val fileName = args.last
++   val input = Paths.get(fileName).toFile
++   val mapper = new ObjectMapper()
++   val orders = mapper.readValue(input, classOf[Array[Order]])
++   if (args.contains("-r")) {
++     println(orders.count(_.status == "ready"))
++   } else {
++     println(orders.length)
++   }
++ }
+```
+* 테스트가 가능하도록 분리한 함수에서는 값을 return 하도록 수정
+```diff
+def main(args: Array[String]): Unit = {
+  try {
+-   run(args)
++   println(run(args))
+  } catch {
+    case e: Exception => {
+      System.err.println(e)
+      System.exit(1)
+    }
+  }
+}
+
+- def run(args: Array[String]): Unit = {
++ def run(args: Array[String]): Long = {
+   if (args.isEmpty) {
+     throw new IllegalArgumentException("파일명을 입력하세요.")
+   }
+   val fileName = args.last
+   val input = Paths.get(fileName).toFile
+   val orders = readOrders(input)
+   if (args.contains("-r")) {
+-     println(orders.count(_.status == "ready"))
++     orders.count(_.status == "ready")
+   } else {
+-     println(orders.length)
++     orders.length
+   }
+ }
+ ```
+
+1. 두 번째 단계에 해당하는 코드를 독립된 메서드로 추출
+
+```diff
+ def run(args: Array[String]): Long = {
+   if (args.isEmpty) {
+     throw new IllegalArgumentException("파일명을 입력하세요.")
+   }
+   val fileName = args.last
+-  val input = Paths.get(fileName).toFile
+-  val orders = readOrders(input)
+-  if (args.contains("-r")) {
+-    orders.count(_.status == "ready")
+-  } else {
+-    orders.length
+-  }
++  countOrders(args, fileName)
+ }
++ def countOrders(args: Array[String], fileName: String): Long = {
++   val input = Paths.get(fileName).toFile
++   val orders = readOrders(input)
++   if (args.contains("-r")) {
++     orders.count(_.status == "ready")
++   } else {
++     orders.length
++   }
++ }
+```
+
+3. 중간 데이터 구조 추가
+```diff
+ def run(args: Array[String]): Long = {
+   if (args.isEmpty) {
+     throw new IllegalArgumentException("파일명을 입력하세요.")
+   }
++  val commandLine = CommandLine(args)
+   val fileName = args.last
+-  countOrders(args, fileName)
++  countOrders(commandLine, args, fileName)
+ }
+```
+
+5. 중간 데이터에 매개변수 한개씩 추가
+```diff
+- def countOrders(args: Array[String], fileName: String): Long = {
++ def countOrders(commandLine: CommandLine, args: Array[String], fileName: String): Long = {
+   val input = Paths.get(fileName).toFile
+   val orders = readOrders(input)
+-   if (args.contains("-r")) {
++   val onlyCountReady = args.contains("-r")
++   if (onlyCountReady) {
+     orders.count(_.status == "ready")
+   } else {
+     orders.length
+   }
+ }
+```
+* 중간 데이터에 onlyCountReady 적용
+```diff
+ def countOrders(commandLine: CommandLine, args: Array[String], fileName: String): Long = {
+   val input = Paths.get(fileName).toFile
+   val orders = readOrders(input)
+-   val onlyCountReady = args.contains("-r")
++   commandLine.onlyCountReady = args.contains("-r")
+-   if (onlyCountReady) {
++   if (commandLine.onlyCountReady) {
+     orders.count(_.status == "ready")
+   } else {
+     orders.length
+   }
+ }
+```
+* 중간 데이터 준비 위치를 이동
+```diff
+ def run(args: Array[String]): Long = {
+   if (args.isEmpty) {
+     throw new IllegalArgumentException("파일명을 입력하세요.")
+   }
+   val commandLine = CommandLine(args)
++   commandLine.onlyCountReady = args.contains("-r")
+   val fileName = args.last
+   countOrders(commandLine, args, fileName)
+ }
+ def countOrders(commandLine: CommandLine, args: Array[String], fileName: String): Long = {
+   val input = Paths.get(fileName).toFile
+   val orders = readOrders(input)
+-   commandLine.onlyCountReady = args.contains("-r")
+   if (commandLine.onlyCountReady) {
+     orders.count(_.status == "ready")
+   } else {
+     orders.length
+   }
+ }
+```
+* 중간 데이터에 매개변수 추가
+```diff
+ def run(args: Array[String]): Long = {
+   if (args.isEmpty) {
+     throw new IllegalArgumentException("파일명을 입력하세요.")
+   }
+   val commandLine = CommandLine(args)
+   commandLine.onlyCountReady = args.contains("-r")
+-   val fileName = args.last
++   commandLine.fileName = args.last
+-   countOrders(commandLine, args, fileName)
++   countOrders(commandLine)
+ }
+- def countOrders(commandLine: CommandLine, args: Array[String], fileName: String): Long = {
++ def countOrders(commandLine: CommandLine): Long = {
+-   val input = Paths.get(fileName).toFile
++   val input = Paths.get(commandLine.fileName).toFile
+   val orders = readOrders(input)
+   if (commandLine.onlyCountReady) {
+     orders.count(_.status == "ready")
+   } else {
+     orders.length
+   }
+ }
+```
+6. 첫 번째 단계 코드를 함수로 추출
+```diff
+ def run(args: Array[String]): Long = {
+-   if (args.isEmpty) {
+-     throw new IllegalArgumentException("파일명을 입력하세요.")
+-   }
+-   val commandLine = CommandLine(args)
+-   commandLine.onlyCountReady = args.contains("-r")
+-   commandLine.fileName = args.last
++  val commandLine = parseCommandLine(args)
+   countOrders(commandLine)
+ }
++ def parseCommandLine(args: Array[String]): CommandLine = {
++   if (args.isEmpty) {
++     throw new IllegalArgumentException("파일명을 입력하세요.")
++   }
++   val result = CommandLine(args)
++   result.fileName = args.last
++   result.onlyCountReady = args.contains("-r")
++   result
++ }
+```
+* 클래스 안으로 이동
+```diff
+- def parseCommandLine(args: Array[String]): CommandLine = {
+-   if (args.isEmpty) {
+-     throw new IllegalArgumentException("파일명을 입력하세요.")
+-   }
+-   val result = CommandLine(args)
+-   result.fileName = args.last
+-   result.onlyCountReady = args.contains("-r")
+-   result
+- }
+ def run(args: Array[String]): Long = {
+-  val commandLine = parseCommandLine(args)
+-   countOrders(commandLine)
++   countOrders(new CommandLine(args))
+ }
+// 나머지 필드 변경은 대충 생략...
+case class CommandLine(args: Array[String]) {
++  def fileName: String = args.last
++  def onlyCountReady: Boolean = args.contains("-r")
+}
++ object CommandLine {
++   def apply(args: Array[String]): CommandLine = {
++     if (args.isEmpty) {
++       throw new IllegalArgumentException("파일명을 입력하세요.")
++     }
++     new CommandLine(args)
++   }
++ }
 ```
