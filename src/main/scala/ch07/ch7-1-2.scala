@@ -20,6 +20,12 @@ class CustomData (data: mutable.Map[String, mutable.Map[String, Object]]) {
   def setUsage(customerID: String, year: String, month: String, amount: Int): Unit = {
     _data(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]](year)(month) = amount
   }
+
+  def compareUsage(customerID: String, lastYear: String, month: String): Int = {
+    val amount1 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]](lastYear)(month)
+    val amount2 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]]((lastYear.toInt - 1).toString)(month)
+    amount1 - amount2
+  }
 }
 
 @main def main(): Unit = {
@@ -30,10 +36,5 @@ class CustomData (data: mutable.Map[String, mutable.Map[String, Object]]) {
   assert(result == 80)
 
   // 읽기예
-  def compareUsage(customerID: String, lastYear: String, month: String): Int = {
-    val amount1 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]](lastYear)(month)
-    val amount2 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]]((lastYear.toInt - 1).toString)(month)
-    amount1 - amount2
-  }
-  assert(compareUsage("1920", "2016", "1") == -30)
+  assert(customData.compareUsage("1920", "2016", "1") == -30)
 }
