@@ -1,5 +1,5 @@
 package org.sangho.refac2scala
-package ch07_1
+package ch07_1_1
 
 import scala.collection.mutable
 
