@@ -22,8 +22,8 @@ class CustomData (data: mutable.Map[String, mutable.Map[String, Object]]) {
   }
 
   def compareUsage(customerID: String, lastYear: String, month: String): Int = {
-    val amount1 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]](lastYear)(month)
-    val amount2 = nestedRecord(customerID)("usages").asInstanceOf[mutable.Map[String, mutable.Map[String, Int]]]((lastYear.toInt - 1).toString)(month)
+    val amount1 = getUsage(customerID, lastYear, month)
+    val amount2 = getUsage(customerID, (lastYear.toInt - 1).toString, month)
     amount1 - amount2
   }
 }
