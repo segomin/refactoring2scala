@@ -1,8 +1,17 @@
 package org.sangho.refac2scala
 package ch07_3
 
-enum Priority:
-  case Normal, High, Rush
+
+enum Priority(val value: Int) {
+  case Normal extends Priority(1);
+  case High extends Priority(2)
+  case Rush extends Priority(3)
+  def higherThan(other: Priority): Boolean = this match {
+    case Normal => other.value < Normal.value
+    case High => other.value < High.value
+    case Rush => other.value < Rush.value
+  }
+}
 
 class Order(data: Map[String, String]) {
   val name = data("name")
@@ -18,6 +27,6 @@ class Order(data: Map[String, String]) {
     new Order(Map("name" -> "apple", "priority" -> "normal")),
     new Order(Map("name" -> "banana", "priority" -> "high")))
 
-  val highPriorityCount = orders.count(order => order.priority == Priority.High || order.priority == Priority.Rush)
+  val highPriorityCount = orders.count(order => order.priority.higherThan(Priority.Normal))
   assert(highPriorityCount == 1)
 }
