@@ -8,7 +8,7 @@ case class Course (name: String, isAdvanced: Boolean)
 class Person (val name: String) {
   private val _courses: mutable.Set[Course] = mutable.Set()
 
-  def courses: mutable.Set[Course] = _courses
+  def courses: Set[Course] = _courses.toSet
 
   def addCourse(course: Course): Unit = _courses.add(course)
   def removeCourse(course: Course): Unit = _courses.remove(course)
