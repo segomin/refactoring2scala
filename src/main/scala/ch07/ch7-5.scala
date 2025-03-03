@@ -1,17 +1,24 @@
 package org.sangho.refac2scala
 package ch07_5
 
-class Person(val name: String, private var _officeAreaCode: String, private var _officeNumber: String) {
-  def officeAreaCode: String = _officeAreaCode
+class Person(val name: String, _officeAreaCode: String, _officeNumber: String) {
+  private var _telephoneNumber = TelephoneNumber(_officeAreaCode, _officeNumber)
 
-  def officeAreaCode_=(arg: String): Unit = _officeAreaCode = arg
+  def officeAreaCode: String = _telephoneNumber.areaCode
 
-  def officeNumber: String = _officeNumber
+  def officeAreaCode_=(arg: String): Unit = _telephoneNumber = _telephoneNumber.copy(areaCode = arg)
 
-  def officeNumber_=(arg: String): Unit = _officeNumber = arg
+  def officeNumber: String = _telephoneNumber.number
 
-  def telephoneNumber: String = s"(${officeAreaCode}) ${officeNumber}"
+  def officeNumber_=(arg: String): Unit = _telephoneNumber = _telephoneNumber.copy(number = arg)
+
+  def telephoneNumber: String = _telephoneNumber.telephoneNumber
 }
+
+case class TelephoneNumber(areaCode: String, number: String) {
+  def telephoneNumber: String = s"(${areaCode}) ${number}"
+}
+
 
 @main def main(): Unit = {
   // getter
