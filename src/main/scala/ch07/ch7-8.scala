@@ -12,13 +12,13 @@ class Department(private var _chargeCode: String, private var _manager: String) 
 }
 
 class Person(val name: String, private var _department: Department) {
-  def manager: String = _department.manager
+  def department: Department = _department
 }
 
 @main def main(): Unit = {
   // test
   val department = new Department("1234", "마틴")
   val person = new Person("파울러", department)
-  val manager = person.manager
+  val manager = person.department.manager
   assert(manager == "마틴")
 }
