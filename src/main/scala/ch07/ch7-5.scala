@@ -1,7 +1,15 @@
 package org.sangho.refac2scala
 package ch07_5
 
-class Person(val name: String, var officeAreaCode: String, var officeNumber: String) {
+class Person(val name: String, private var _officeAreaCode: String, private var _officeNumber: String) {
+  def officeAreaCode: String = _officeAreaCode
+
+  def officeAreaCode_=(arg: String): Unit = _officeAreaCode = arg
+
+  def officeNumber: String = _officeNumber
+
+  def officeNumber_=(arg: String): Unit = _officeNumber = arg
+
   def telephoneNumber: String = s"(${officeAreaCode}) ${officeNumber}"
 }
 
