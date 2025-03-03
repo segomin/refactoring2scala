@@ -27,4 +27,6 @@ class Shipment(private var _trackingInformation: TrackingInformation) {
   val shipment = new Shipment(trackingInformation)
   assert(shipment.trackingInfo == "우체국: 1234")
   assert(shipment.trackingInformation == trackingInformation)
+  shipment.trackingInformation.shippingCompany = "대한통운"
+  assert(shipment.trackingInfo == "대한통운: 1234")
 }
