@@ -2,12 +2,7 @@ package org.sangho.refac2scala
 package ch07_9
 
 def foundPerson(people: List[String]): String = {
-  for (person <- people) {
-    if (person == "Don") return "Don"
-    if (person == "John") return "John"
-    if (person == "Kent") return "Kent"
-  }
-  ""
+  people.find(Set("Don", "John", "Kent").contains).getOrElse("")
 }
 
 
