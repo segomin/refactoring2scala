@@ -5,11 +5,12 @@ case class Item(name: String, price: Int)
 
 class Order(val quantity: Int, val item: Item) {
   def price: Double = {
-    val basePrice = quantity * item.price
     var discountFactor = 0.98
     if (basePrice > 1000) discountFactor -= 0.03
     basePrice * discountFactor
   }
+
+  private def basePrice: Int = quantity * item.price
 }
 
 @main def main(): Unit = {
