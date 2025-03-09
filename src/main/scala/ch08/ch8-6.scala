@@ -16,12 +16,11 @@ def chargeOrder(charge: Double): String = {
 }
 
 @main def main(): Unit = {
-  val pricingPlan = retrievePricingPlan()
-  val baseCharge = pricingPlan.base
   val order = retrieveOrder()
-  val units = order.units
+  val pricingPlan = retrievePricingPlan()
   val chargePerUnit = pricingPlan.unit
-  val charge = baseCharge + units * chargePerUnit
+  val units = order.units
+  val charge = pricingPlan.base + units * chargePerUnit
   val discountableUnits = Math.max(units - pricingPlan.discountThreshold, 0)
   var discount = discountableUnits * pricingPlan.discountFactor
   if (order.isRepeat) discount += 20
