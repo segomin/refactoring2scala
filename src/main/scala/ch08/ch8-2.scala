@@ -10,13 +10,21 @@ case class Amount(value: Double) {
   def multiply(rate: Double): Amount = Amount(value * rate)
 }
 
-class Customer(val name: String, private var _discountRate: Double) {
+class Customer(_name: String, __discountRate: Double) {
+  val name = _name
+  private var _discountRate = applyDiscountRate(__discountRate)
   val contract: CustomerContract = CustomerContract(new Date())
+
+  private def applyDiscountRate(discountRate: Double): Double = discountRate
 
   def discountRate(): Double = _discountRate
 
+  def setDiscountRate(number: Double): Unit = {
+    _discountRate = applyDiscountRate(number)
+  }
+
   def becomePreferred(): Unit = {
-    _discountRate += 0.03
+    setDiscountRate(_discountRate + 0.03)
   }
 
   def applyDiscount(amount: Amount): Amount = amount.subtract(amount.multiply(_discountRate))
