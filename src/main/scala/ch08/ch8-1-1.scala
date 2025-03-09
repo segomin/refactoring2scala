@@ -10,17 +10,6 @@ def trackSummary(points: List[Point]): Record = {
   // 시간 계산
   def calculateTime(): Double = points.foldLeft(0.0)((acc, p) => acc + p.elevation)
 
-  def distance(p1: Point, p2: Point): Double = {
-    val EARTH_RADIUS = 3959.0 // mile
-    val dLat = radians(p2.lat) - radians(p1.lat)
-    val dLon = radians(p2.lon) - radians(p1.lon)
-    val a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(radians(p2.lat)) * Math.cos(radians(p1.lat)) * Math.pow(Math.sin(dLon / 2), 2)
-    val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    EARTH_RADIUS * c
-  }
-
-  def radians(degrees: Double): Double = degrees * Math.PI / 180
-
   def calculateDistance(): Double = {
     var result = 0.0;
     for (i <- 0 until points.length - 1) {
@@ -35,6 +24,26 @@ def trackSummary(points: List[Point]): Record = {
 
   Record(totalTime, totalDistance, pace)
 }
+
+def top_calculateDistance(points: List[Point]): Double = {
+  var result = 0.0;
+  for (i <- 0 until points.length - 1) {
+    result += distance(points(i), points(i + 1))
+  }
+  result
+}
+
+def distance(p1: Point, p2: Point): Double = {
+  val EARTH_RADIUS = 3959.0 // mile
+  val dLat = radians(p2.lat) - radians(p1.lat)
+  val dLon = radians(p2.lon) - radians(p1.lon)
+  val a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(radians(p2.lat)) * Math.cos(radians(p1.lat)) * Math.pow(Math.sin(dLon / 2), 2)
+  val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  EARTH_RADIUS * c
+}
+
+def radians(degrees: Double): Double = degrees * Math.PI / 180
+
 
 // main
 @main def main(): Unit = {
