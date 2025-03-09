@@ -16,7 +16,7 @@ case class Person(name: String, photo: Photo)
 def renderPerson(outStream: OutputStream, person: Person): Unit = {
   outStream.write(s"<p>${person.name}</p>\n".getBytes)
   renderPhoto(outStream, person.photo)
-  zztmp(outStream, person.photo)
+  emitPhotoData(outStream, person.photo)
   outStream.write(s"<p>위치: ${person.photo.location}</p>\n".getBytes)
 }
 
@@ -25,7 +25,7 @@ def listRecentPhotos(outStream: OutputStream, photos: List[Photo]): Unit = {
     .filter(photo => photo.date.isAfter(recentDateCutoff()))
     .foreach { photo =>
       outStream.write(s"<div>\n".getBytes)
-      zztmp(outStream, photo)
+      emitPhotoData(outStream, photo)
       outStream.write(s"<p>위치: ${photo.location}</p>\n".getBytes)
       outStream.write(s"</div>\n".getBytes)
     }
@@ -38,11 +38,6 @@ def renderPhoto(outStream: OutputStream, photo: Photo): Unit = {
 }
 
 def emitPhotoData(outStream: OutputStream, photo: Photo): Unit = {
-  zztmp(outStream, photo)
-  outStream.write(s"<p>위치: ${photo.location}</p>\n".getBytes)
-}
-
-def zztmp(outStream: OutputStream, photo: Photo): Unit = {
   outStream.write(s"<p>제목: ${photo.title}</p>\n".getBytes)
   outStream.write(s"<p>날짜: ${photo.date.toDateString}</p>\n".getBytes)
 }
