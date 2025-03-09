@@ -5,14 +5,12 @@ case class Order(units: Int, isRepeat: Boolean)
 
 case class PricingPlan(base: Double, unit: Double, discountThreshold: Int, discountFactor: Double) {
   def calculateCharge(order: Order) = {
-    val chargePerUnit = this.unit
-    val units = order.units
-    val charge = this.base + units * chargePerUnit
-    val discountableUnits = Math.max(units - this.discountThreshold, 0)
+    val charge = this.base + order.units * this.unit
+
+    val discountableUnits = Math.max(order.units - this.discountThreshold, 0)
     var discount = discountableUnits * this.discountFactor
     if (order.isRepeat) discount += 20
-    val finalCharge = charge - discount
-    finalCharge
+    charge - discount
   }
 }
 
