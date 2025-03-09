@@ -26,12 +26,8 @@ class Account(daysOverdrawn: Int, accountType: AccountType) {
   // 은행 이자 계산
   def bankCharge() = {
     var result = 4.5
-    if (daysOverdrawn > 0) result += overdraftCharge
+    if (daysOverdrawn > 0) result += accountType.overdraftCharge(daysOverdrawn)
     result
-  }
-  // 초과 인출 이자 계산
-  def overdraftCharge = {
-    accountType.overdraftCharge(daysOverdrawn)
   }
 }
 
