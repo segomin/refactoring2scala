@@ -25,15 +25,11 @@ def photoDiv(photo: Photo) = List(
 
 def zznew(photo: Photo) = List(
   s"<p>제목: ${photo.title}</p>",
-  emitPhotoData(photo)
-).mkString("\n")
-
-def renderPhoto(photo: Photo) = s"<img src='${photo.url}' alt='${photo.title}'>"
-
-def emitPhotoData(photo: Photo): String = List(
   s"<p>위치: ${photo.location}</p>",
   s"<p>날짜: ${photo.date.toDateString}</p>"
 ).mkString("\n")
+
+def renderPhoto(photo: Photo) = s"<img src='${photo.url}' alt='${photo.title}'>"
 
 @main def main(): Unit = {
   val time = OffsetDateTime.of(2025, 3, 9, 0, 0, 0, 0, OffsetDateTime.now().getOffset)
