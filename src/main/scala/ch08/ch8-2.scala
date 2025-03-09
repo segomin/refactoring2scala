@@ -3,7 +3,7 @@ package ch08_2
 
 import java.util.Date
 
-case class CustomerContract(startDate: Date)
+case class CustomerContract(startDate: Date, discountRate: Double = 0.0)
 
 case class Amount(value: Double) {
   def subtract(amount: Amount): Amount = Amount(value - amount.value)
@@ -12,22 +12,19 @@ case class Amount(value: Double) {
 
 class Customer(_name: String, __discountRate: Double) {
   val name = _name
-  private var _discountRate = applyDiscountRate(__discountRate)
-  val contract: CustomerContract = CustomerContract(new Date())
+  var contract: CustomerContract = CustomerContract(new Date(), __discountRate)
 
-  private def applyDiscountRate(discountRate: Double): Double = discountRate
-
-  def discountRate(): Double = _discountRate
+  def discountRate(): Double = contract.discountRate
 
   def setDiscountRate(number: Double): Unit = {
-    _discountRate = applyDiscountRate(number)
+    contract = contract.copy(discountRate = number)
   }
 
   def becomePreferred(): Unit = {
-    setDiscountRate(_discountRate + 0.03)
+    setDiscountRate(discountRate() + 0.03)
   }
 
-  def applyDiscount(amount: Amount): Amount = amount.subtract(amount.multiply(_discountRate))
+  def applyDiscount(amount: Amount): Amount = amount.subtract(amount.multiply(discountRate()))
 }
 
 
