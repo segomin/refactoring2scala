@@ -36,9 +36,13 @@ def renderPhoto(outStream: OutputStream, photo: Photo): Unit = {
 }
 
 def emitPhotoData(outStream: OutputStream, photo: Photo): Unit = {
+  zztmp(outStream, photo)
+  outStream.write(s"<p>위치: ${photo.location}</p>\n".getBytes)
+}
+
+def zztmp(outStream: OutputStream, photo: Photo): Unit = {
   outStream.write(s"<p>제목: ${photo.title}</p>\n".getBytes)
   outStream.write(s"<p>날짜: ${photo.date.toDateString}</p>\n".getBytes)
-  outStream.write(s"<p>위치: ${photo.location}</p>\n".getBytes)
 }
 
 @main def main(): Unit = {
