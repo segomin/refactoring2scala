@@ -11,7 +11,7 @@
 - [x] [CHAPTER 05 리팩터링 카탈로그 보는 법](src/main/scala/ch05/README.md)
 - [x] [CHAPTER 06 기본적인 리팩터링](src/main/scala/ch06/README.md)
 - [x] [CHAPTER 07 캡슐화](src/main/scala/ch07/README.md)
-- [ ] [CHAPTER 08 기능 이동](src/main/scala/ch08/README.md)
+- [x] [CHAPTER 08 기능 이동](src/main/scala/ch08/README.md)
 - [ ] [CHAPTER 09 데이터 조직화](src/main/scala/ch09/README.md)
 - [ ] [CHAPTER 10 조건부 로직 간소화](src/main/scala/ch10/README.md)
 - [ ] [CHAPTER 11 API 리팩터링](src/main/scala/ch11/README.md)
