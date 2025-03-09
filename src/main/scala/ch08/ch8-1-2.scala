@@ -6,6 +6,20 @@ enum AccountType {
   case BASIC
 
   def isPremium = this == PREMIUM
+
+  // 초과 인출 이자 계산
+  def overdraftCharge(daysOverdrawn: Int) = {
+    if (isPremium) {
+      val baseCharge = 10.0
+      if (daysOverdrawn <= 7) {
+        baseCharge
+      } else {
+        baseCharge + (daysOverdrawn - 7) * 0.85
+      }
+    } else {
+      daysOverdrawn * 1.75
+    }
+  }
 }
 
 class Account(daysOverdrawn: Int, accountType: AccountType) {
@@ -17,16 +31,7 @@ class Account(daysOverdrawn: Int, accountType: AccountType) {
   }
   // 초과 인출 이자 계산
   def overdraftCharge = {
-    if (accountType.isPremium) {
-      val baseCharge = 10.0
-      if (daysOverdrawn <= 7) {
-        baseCharge
-      } else {
-        baseCharge + (daysOverdrawn - 7) * 0.85
-      }
-    } else {
-      daysOverdrawn * 1.75
-    }
+    accountType.overdraftCharge(daysOverdrawn)
   }
 }
 
