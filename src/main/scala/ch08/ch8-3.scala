@@ -14,15 +14,18 @@ case class Person(name: String, photo: Photo)
 def renderPerson(person: Person): String = List(
   s"<p>${person.name}</p>",
   renderPhoto(person.photo),
-  s"<p>제목: ${person.photo.title}</p>",
-  emitPhotoData(person.photo)
+  zznew(person.photo),
 ).mkString("\n")
 
 def photoDiv(photo: Photo) = List(
   "<div>",
-  s"<p>제목: ${photo.title}</p>",
-  emitPhotoData(photo),
+  zznew(photo),
   "</div>"
+).mkString("\n")
+
+def zznew(photo: Photo) = List(
+  s"<p>제목: ${photo.title}</p>",
+  emitPhotoData(photo)
 ).mkString("\n")
 
 def renderPhoto(photo: Photo) = s"<img src='${photo.url}' alt='${photo.title}'>"
