@@ -25,7 +25,8 @@ def listRecentPhotos(outStream: OutputStream, photos: List[Photo]): Unit = {
     .filter(photo => photo.date.isAfter(recentDateCutoff()))
     .foreach { photo =>
       outStream.write(s"<div>\n".getBytes)
-      emitPhotoData(outStream, photo)
+      zztmp(outStream, photo)
+      outStream.write(s"<p>위치: ${photo.location}</p>\n".getBytes)
       outStream.write(s"</div>\n".getBytes)
     }
 }
