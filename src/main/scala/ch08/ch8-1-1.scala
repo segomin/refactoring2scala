@@ -16,13 +16,8 @@ def trackSummary(points: List[Point]): Record = {
   Record(totalTime, totalDistance(points), pace)
 }
 
-def totalDistance(points: List[Point]): Double = {
-  var result = 0.0;
-  for (i <- 0 until points.length - 1) {
-    result += distance(points(i), points(i + 1))
-  }
-  result
-}
+def totalDistance(points: List[Point]): Double =
+  points.sliding(2).foldLeft(0.0)((acc, p) => acc + distance(p(0), p(1)))
 
 def distance(p1: Point, p2: Point): Double = {
   val EARTH_RADIUS = 3959.0 // mile
