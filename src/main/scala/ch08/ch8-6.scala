@@ -15,9 +15,7 @@ def chargeOrder(charge: Double): String = {
   s"Charge: $charge"
 }
 
-@main def main(): Unit = {
-  val order = retrieveOrder()
-  val pricingPlan = retrievePricingPlan()
+def calculateCharge(order: Order, pricingPlan: PricingPlan) = {
   val chargePerUnit = pricingPlan.unit
   val units = order.units
   val charge = pricingPlan.base + units * chargePerUnit
@@ -25,6 +23,13 @@ def chargeOrder(charge: Double): String = {
   var discount = discountableUnits * pricingPlan.discountFactor
   if (order.isRepeat) discount += 20
   val finalCharge = charge - discount
+  finalCharge
+}
+
+@main def main(): Unit = {
+  val order = retrieveOrder()
+  val pricingPlan = retrievePricingPlan()
+  val finalCharge = calculateCharge(order, pricingPlan)
   val actual = chargeOrder(finalCharge)
 
   assert(actual == "Charge: 90.0")
