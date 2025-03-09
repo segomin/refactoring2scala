@@ -17,18 +17,16 @@ def chargeOrder(charge: Double): String = {
 
 @main def main(): Unit = {
   val pricingPlan = retrievePricingPlan()
-  val order = retrieveOrder()
   val baseCharge = pricingPlan.base
-  var charge: Double = 0.0
-  val chargePerUnit = pricingPlan.unit
+  val order = retrieveOrder()
   val units = order.units
-  var discount: Double = 0.0
-  charge = baseCharge + units * chargePerUnit
+  val chargePerUnit = pricingPlan.unit
+  val charge = baseCharge + units * chargePerUnit
   val discountableUnits = Math.max(units - pricingPlan.discountThreshold, 0)
-  discount = discountableUnits * pricingPlan.discountFactor
+  var discount = discountableUnits * pricingPlan.discountFactor
   if (order.isRepeat) discount += 20
-  charge = charge - discount
-  val actual = chargeOrder(charge)
+  val finalCharge = charge - discount
+  val actual = chargeOrder(finalCharge)
 
   assert(actual == "Charge: 90.0")
 }
