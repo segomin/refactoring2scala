@@ -14,16 +14,16 @@ case class Person(name: String, photo: Photo)
 def renderPerson(person: Person): String = List(
   s"<p>${person.name}</p>",
   renderPhoto(person.photo),
-  zznew(person.photo),
+  emitPhotoData(person.photo),
 ).mkString("\n")
 
 def photoDiv(photo: Photo) = List(
   "<div>",
-  zznew(photo),
+  emitPhotoData(photo),
   "</div>"
 ).mkString("\n")
 
-def zznew(photo: Photo) = List(
+def emitPhotoData(photo: Photo) = List(
   s"<p>제목: ${photo.title}</p>",
   s"<p>위치: ${photo.location}</p>",
   s"<p>날짜: ${photo.date.toDateString}</p>"
