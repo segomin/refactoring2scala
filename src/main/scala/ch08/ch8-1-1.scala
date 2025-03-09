@@ -10,16 +10,14 @@ def trackSummary(points: List[Point]): Record = {
   // 시간 계산
   def calculateTime(): Double = points.foldLeft(0.0)((acc, p) => acc + p.elevation)
 
-  def calculateDistance(): Double = top_calculateDistance(points)
-
   val totalTime = calculateTime()
-  val totalDistance = calculateDistance()
+  val totalDistance = calculateDistance(points)
   val pace = totalTime / 60 / totalDistance
 
   Record(totalTime, totalDistance, pace)
 }
 
-def top_calculateDistance(points: List[Point]): Double = {
+def calculateDistance(points: List[Point]): Double = {
   var result = 0.0;
   for (i <- 0 until points.length - 1) {
     result += distance(points(i), points(i + 1))
