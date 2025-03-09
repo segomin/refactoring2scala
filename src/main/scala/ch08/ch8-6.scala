@@ -4,12 +4,12 @@ package ch08_6
 case class Order(units: Int, isRepeat: Boolean)
 
 case class PricingPlan(base: Double, unit: Double, discountThreshold: Int, discountFactor: Double) {
-  def calculateCharge(order: Order, pricingPlan: PricingPlan) = {
-    val chargePerUnit = pricingPlan.unit
+  def calculateCharge(order: Order) = {
+    val chargePerUnit = this.unit
     val units = order.units
-    val charge = pricingPlan.base + units * chargePerUnit
-    val discountableUnits = Math.max(units - pricingPlan.discountThreshold, 0)
-    var discount = discountableUnits * pricingPlan.discountFactor
+    val charge = this.base + units * chargePerUnit
+    val discountableUnits = Math.max(units - this.discountThreshold, 0)
+    var discount = discountableUnits * this.discountFactor
     if (order.isRepeat) discount += 20
     val finalCharge = charge - discount
     finalCharge
@@ -30,7 +30,7 @@ def chargeOrder(charge: Double): String = {
 @main def main(): Unit = {
   val order = retrieveOrder()
   val pricingPlan = retrievePricingPlan()
-  val finalCharge = pricingPlan.calculateCharge(order, pricingPlan)
+  val finalCharge = pricingPlan.calculateCharge(order)
   val actual = chargeOrder(finalCharge)
 
   assert(actual == "Charge: 90.0")
