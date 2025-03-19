@@ -6,8 +6,8 @@ package ch09_1
   val height = 10
   val width = 20
 
-  var temp = 2 * (height + width)
-  println(temp)
-  temp = height + width
-  println(temp)
+  val perimeter = 2 * (height + width)
+  println(perimeter)
+  val area = height + width
+  println(area)
 }
