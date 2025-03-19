@@ -4,7 +4,6 @@ package ch09_3
 case class Adjustment(amount: Int)
 
 class ProductionPlan {
-  private var _production = 0
   private var _adjustments = List[Adjustment]()
 
   def production: Int = {
@@ -13,7 +12,6 @@ class ProductionPlan {
 
   def applyAdjustment(anAdjustment: Adjustment): Unit = {
     _adjustments = anAdjustment :: _adjustments
-    _production += anAdjustment.amount
   }
 }
 
