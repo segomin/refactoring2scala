@@ -20,4 +20,5 @@ class Person {
   person.officeNumber = "1234-5678"
   assert(person.officeAreaCode == "02")
   assert(person.officeNumber == "1234-5678")
+  assert(TelephoneNumber("02", "1234-5678") == TelephoneNumber("02", "1234-5678"))
 }
