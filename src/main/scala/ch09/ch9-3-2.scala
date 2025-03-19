@@ -4,13 +4,11 @@ package ch09_3_2
 case class Adjustment(amount: Int)
 
 class ProductionPlan (__production: Int) {
-  private var _initialProduction = __production
-  private var _productionAccumulator = 0
+  private val _initialProduction = __production
   private var _adjustments = List[Adjustment]()
 
   def production: Int = {
-    assert(_productionAccumulator == calculateProductionAccumulator)
-    _initialProduction + _productionAccumulator
+    _initialProduction + calculateProductionAccumulator
   }
 
   def calculateProductionAccumulator: Int = {
@@ -19,7 +17,6 @@ class ProductionPlan (__production: Int) {
 
   def applyAdjustment(anAdjustment: Adjustment): Unit = {
     _adjustments = anAdjustment :: _adjustments
-    _productionAccumulator += anAdjustment.amount
   }
 }
 
