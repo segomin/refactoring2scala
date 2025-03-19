@@ -1,25 +1,16 @@
 package org.sangho.refac2scala
 package ch09
 
-class TelephoneNumber {
-  private var _areaCode = ""
-  private var _number = ""
-
-  def areaCode: String = _areaCode
-  def areaCode_=(arg: String): Unit = _areaCode = arg
-
-  def number: String = _number
-  def number_=(arg: String): Unit = _number = arg
-}
+case class TelephoneNumber(areaCode: String = "", number: String = "")
 
 class Person {
-  private val _telephoneNumber = new TelephoneNumber()
+  private var _telephoneNumber = TelephoneNumber()
 
   def officeAreaCode: String = _telephoneNumber.areaCode
-  def officeAreaCode_=(arg: String): Unit = _telephoneNumber.areaCode = arg
+  def officeAreaCode_=(arg: String): Unit = _telephoneNumber = TelephoneNumber(arg, _telephoneNumber.number)
 
   def officeNumber: String = _telephoneNumber.number
-  def officeNumber_=(arg: String): Unit = _telephoneNumber.number = arg
+  def officeNumber_=(arg: String): Unit = _telephoneNumber = TelephoneNumber(_telephoneNumber.areaCode, arg)
 }
 
 // main
