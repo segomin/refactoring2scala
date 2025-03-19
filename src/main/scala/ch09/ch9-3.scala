@@ -8,11 +8,6 @@ class ProductionPlan {
   private var _adjustments = List[Adjustment]()
 
   def production: Int = {
-    assert(_production == calculatedProduction)
-    _production
-  }
-
-  private def calculatedProduction: Int = {
     _adjustments.foldLeft(0)((sum, a) => sum + a.amount)
   }
 
