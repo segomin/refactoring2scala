@@ -6,16 +6,16 @@ case class Scenario(primaryForce: Int, secondaryForce: Int, mass: Int, delay: In
 def distanceTravelled(scenario: Scenario, time: Int): Int = {
   var result: Int = 0
   // 가속도(a) = 힘(F) / 질량(m)
-  var acc = scenario.primaryForce / scenario.mass
+  val primaryAcceleration = scenario.primaryForce / scenario.mass
   val primaryTime = Math.min(time, scenario.delay)
   // 전파된 거리
-  result = (0.5 * acc * primaryTime * primaryTime).toInt
+  result = (0.5 * primaryAcceleration * primaryTime * primaryTime).toInt
   val secondaryTime = time - scenario.delay
   if (secondaryTime > 0) {
     // 두 번째 힘을 반영해 다시 계산
-    val primaryVelocity = acc * scenario.delay
-    acc = (scenario.primaryForce + scenario.secondaryForce) / scenario.mass
-    result += primaryVelocity * secondaryTime + (0.5 * acc * secondaryTime * secondaryTime).toInt
+    val primaryVelocity = primaryAcceleration * scenario.delay
+    val secondaryAcceleration = (scenario.primaryForce + scenario.secondaryForce) / scenario.mass
+    result += primaryVelocity * secondaryTime + (0.5 * secondaryAcceleration * secondaryTime * secondaryTime).toInt
   }
   result
 }
