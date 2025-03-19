@@ -8,11 +8,7 @@ class ProductionPlan (__production: Int) {
   private var _adjustments = List[Adjustment]()
 
   def production: Int = {
-    _initialProduction + calculateProductionAccumulator
-  }
-
-  def calculateProductionAccumulator: Int = {
-    _adjustments.foldLeft(0)((sum, a) => sum + a.amount)
+    _initialProduction + _adjustments.foldLeft(0)((sum, a) => sum + a.amount)
   }
 
   def applyAdjustment(anAdjustment: Adjustment): Unit = {
