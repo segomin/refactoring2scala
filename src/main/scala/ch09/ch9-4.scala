@@ -1,5 +1,5 @@
 package org.sangho.refac2scala
-package ch09
+package ch09_4
 
 case class TelephoneNumber(areaCode: String = "", number: String = "")
 
