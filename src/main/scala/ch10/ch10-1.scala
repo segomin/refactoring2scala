@@ -14,12 +14,7 @@ def chargeOf(date: Date, plan: Plan, quantity: Int): Int = {
   def summerCharge = quantity * plan.summerRate
   def regularCharge = quantity * plan.regularRate + plan.regularServiceCharge
 
-  var charge: Int = 0
-  if (summer)
-    charge = summerCharge
-  else
-    charge = regularCharge
-  charge
+  if (summer) summerCharge else regularCharge
 }
 
 // main
