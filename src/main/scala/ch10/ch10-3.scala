@@ -21,11 +21,11 @@ case class Instrument(capital: Int, income: Int, duration: Int, adjustmentFactor
 
 def adjustedCapital(instrument: Instrument): Int = {
   var result = 0
-  if (instrument.capital > 0) {
-    if (instrument.interestRate > 0 && instrument.duration > 0) {
-      result = (instrument.income / instrument.duration) * instrument.adjustmentFactor
-    }
-  }
+  if instrument.capital <= 0 then return result
+
+  if instrument.interestRate > 0 && instrument.duration > 0 then return result
+
+  result = (instrument.income / instrument.duration) * instrument.adjustmentFactor
   result
 }
 
