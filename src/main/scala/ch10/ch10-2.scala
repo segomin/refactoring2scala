@@ -4,9 +4,11 @@ package ch10_2
 case class Employee(seniority: Int, monthsDisabled: Int, isPartTime: Boolean)
 
 def disabilityAmount(employee: Employee): Int = {
-  if (employee.seniority < 2
+  def isNotEligibleForDisability = employee.seniority < 2
     || employee.monthsDisabled > 12
-    || employee.isPartTime) return 0
+    || employee.isPartTime
+
+  if (isNotEligibleForDisability) return 0
 
   // 장애 수당 계산
   employee.seniority + 100
