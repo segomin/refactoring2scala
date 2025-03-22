@@ -6,7 +6,6 @@ case class Amount(amount: Int, reasonCode: String)
 case class Employee(isSeparated: Boolean, isRetired: Boolean, salary: Int)
 
 def payAmount(employee: Employee): Amount = {
-  var result: Amount = null
 
   def someFinalComputation(employee: Employee) = {
     Amount(employee.salary, "NOR")
@@ -15,8 +14,7 @@ def payAmount(employee: Employee): Amount = {
   if (employee.isSeparated) return Amount(0, "SEP")
   if (employee.isRetired) return Amount(0, "RET")
   // 급여 계산 로직
-  result = someFinalComputation(employee)
-  result
+  someFinalComputation(employee)
 }
 
 case class Instrument(capital: Int, income: Int, duration: Int, adjustmentFactor: Int, interestRate: Int)
