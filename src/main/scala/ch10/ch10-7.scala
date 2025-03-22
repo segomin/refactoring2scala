@@ -7,16 +7,7 @@ def sendVillainAlert(people: List[String], sendAlertRun: Runnable): Unit = {
   }
 
   def checkForMiscreants(people: List[String]): Unit = {
-    for (p <- people) {
-      if (p == "조커") {
-        sendAlert()
-        return
-      }
-      if (p == "사루만") {
-        sendAlert()
-        return
-      }
-    }
+    if people.exists(p => List("조커","사루만").contains(p)) then sendAlert()
   }
 
   checkForMiscreants(people)
