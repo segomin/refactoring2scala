@@ -21,15 +21,19 @@ class Customer(__name: String, __paymentHistory: PaymentHistory = PaymentHistory
   def isUnknown: Boolean = false
 }
 
-class UnknownCustomer(paymentHistory: PaymentHistory) extends Customer("미확인 고객", paymentHistory) {
+class UnknownCustomer(_paymentHistory: PaymentHistory) extends Customer("미확인 고객", _paymentHistory) {
   override def name: String = "거주자"
 
   override def isUnknown: Boolean = true
 
   override def billingPlan_=(arg: String): Unit = {}
+
+  override def paymentHistory: PaymentHistory = new NullPaymentHistory()
 }
 
 case class PaymentHistory(weeksDelinquentInLastYear: Int)
+
+class NullPaymentHistory extends PaymentHistory(0)
 
 class Site(__customer: Customer) {
   private var _customer: Customer = if (__customer.isKindOf("미확인 고객")) {
@@ -67,11 +71,7 @@ def client3(site: Site, newPlan: String): Unit = {
 
 def client4(site: Site): Int = {
   val customer = site.customer
-  val weeksDelinquent = if (customer.isUnknown) {
-    0
-  } else {
-    customer.paymentHistory.weeksDelinquentInLastYear
-  }
+  val weeksDelinquent = customer.paymentHistory.weeksDelinquentInLastYear
   weeksDelinquent
 }
 
