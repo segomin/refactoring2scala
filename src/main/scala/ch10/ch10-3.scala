@@ -20,9 +20,11 @@ def payAmount(employee: Employee): Amount = {
 case class Instrument(capital: Int, income: Int, duration: Int, adjustmentFactor: Int, interestRate: Int)
 
 def adjustedCapital(instrument: Instrument): Int = {
-  if instrument.capital <= 0 then return 0
-
-  if instrument.interestRate > 0 && instrument.duration > 0 then return 0
+  var result = 0
+  if instrument.capital <= 0
+    || instrument.interestRate <= 0
+    || instrument.duration <= 0
+  then return result
 
   (instrument.income / instrument.duration) * instrument.adjustmentFactor
 }
