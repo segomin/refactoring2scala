@@ -36,6 +36,12 @@ class Rating(val voyage: Voyage, val history: List[History]) {
     var result = 2
     if (voyage.zone == "중국") result += 1
     if (voyage.zone == "동인도") result += 1
+    result += voyageAndHistoryLengthFactor()
+    result
+  }
+
+  private def voyageAndHistoryLengthFactor(): Int = {
+    var result: Int = 0
     if (voyage.zone == "중국" && hasChinaHistory()) {
       result += 3
       if (history.length > 10) result += 1
@@ -55,6 +61,8 @@ class ExperiencedChinaRating(voyage: Voyage, history: List[History]) extends Rat
     val result = super.captainHistoryRisk() - 2
     Math.max(result, 0)
   }
+
+
 }
 
 def createRating(voyage: Voyage, history: List[History]) = {
