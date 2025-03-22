@@ -1,9 +1,12 @@
 package org.sangho.refac2scala
 package ch10_5
 
-class Customer(val name: String, __paymentHistory: PaymentHistory = PaymentHistory(0)) {
+class Customer(__name: String, __paymentHistory: PaymentHistory = PaymentHistory(0)) {
+  private val _name: String = __name
   private var _billingPlan: String = "normal"
   private var _paymentHistory: PaymentHistory = __paymentHistory
+
+  def name: String = _name
 
   def billingPlan: String = _billingPlan
   def billingPlan_=(arg: String): Unit = _billingPlan = arg
@@ -17,6 +20,7 @@ class Customer(val name: String, __paymentHistory: PaymentHistory = PaymentHisto
 }
 
 class UnknownCustomer extends Customer("미확인 고객") {
+  override def name: String = "거주자"
   override def isUnknown: Boolean = true
 }
 
@@ -36,8 +40,7 @@ case class Registry(billingPlans: BillingPlans)
 
 def client1(site: Site): String = {
   val customer = site.customer
-  val customerName = if (customer.isUnknown) "거주자" else customer.name
-  customerName
+  customer.name
 }
 
 def client2(site: Site): String = {
