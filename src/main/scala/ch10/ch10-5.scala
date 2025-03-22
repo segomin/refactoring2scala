@@ -9,9 +9,11 @@ class Customer(__name: String, __paymentHistory: PaymentHistory = PaymentHistory
   def name: String = _name
 
   def billingPlan: String = _billingPlan
+
   def billingPlan_=(arg: String): Unit = _billingPlan = arg
 
   def paymentHistory: PaymentHistory = _paymentHistory
+
   def paymentHistory_=(arg: PaymentHistory): Unit = _paymentHistory = arg
 
   def isKindOf(arg: String): Boolean = arg == name
@@ -19,17 +21,25 @@ class Customer(__name: String, __paymentHistory: PaymentHistory = PaymentHistory
   def isUnknown: Boolean = false
 }
 
-class UnknownCustomer extends Customer("미확인 고객") {
+class UnknownCustomer(paymentHistory: PaymentHistory) extends Customer("미확인 고객", paymentHistory) {
   override def name: String = "거주자"
+
   override def isUnknown: Boolean = true
+
+  override def billingPlan_=(arg: String): Unit = {}
 }
 
 case class PaymentHistory(weeksDelinquentInLastYear: Int)
 
 class Site(__customer: Customer) {
-  private var _customer: Customer = __customer
+  private var _customer: Customer = if (__customer.isKindOf("미확인 고객")) {
+    new UnknownCustomer(__customer.paymentHistory)
+  }
+  else {
+    __customer
+  }
 
-  def customer: Customer = if _customer.isKindOf("미확인 고객") then new UnknownCustomer else _customer
+  def customer: Customer = _customer
 
   def customer_=(arg: Customer): Unit = _customer = arg
 }
@@ -52,9 +62,7 @@ def client2(site: Site): String = {
 
 def client3(site: Site, newPlan: String): Unit = {
   val customer = site.customer
-  if (!customer.isUnknown) {
-    customer.billingPlan = newPlan
-  }
+  customer.billingPlan = newPlan
 }
 
 def client4(site: Site): Int = {
