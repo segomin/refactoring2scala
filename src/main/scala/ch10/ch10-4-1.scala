@@ -1,37 +1,22 @@
 package org.sangho.refac2scala
 package ch10_4_1
 
-class Bird(val kind: String, val numberOfCoconuts: Int, val voltage: Int, val isNailed: Boolean = false) {
-  def plumage: String = {
-    kind match {
-      case "유럽 제비" => throw new RuntimeException("오류 발생")
-      case "아프리카 제비" => throw new RuntimeException("오류 발생")
-      case "노르웨이 파랑 앵무" => throw new RuntimeException("오류 발생")
-      case _ => "알 수 없다"
-    }
-  }
-
-  def airSpeedVelocity: Int = {
-    kind match {
-      case "유럽 제비" => throw new RuntimeException("오류 발생")
-      case "아프리카 제비" => throw new RuntimeException("오류 발생")
-      case "노르웨이 파랑 앵무" => throw new RuntimeException("오류 발생")
-      case _ => 0
-    }
-  }
+trait Bird(val kind: String) {
+  def plumage: String
+  def airSpeedVelocity: Int
 }
 
 
-class EuropeanSwallow extends Bird("유럽 제비", 0, 0) {
+class EuropeanSwallow extends Bird("유럽 제비") {
   override def plumage: String = "보통이다"
   override def airSpeedVelocity: Int = 35
 }
-class AfricanSwallow(numberOfCoconuts: Int) extends Bird("아프리카 제비", numberOfCoconuts, 0) {
+class AfricanSwallow(numberOfCoconuts: Int) extends Bird("아프리카 제비") {
   override def plumage: String = if (numberOfCoconuts > 2) "지쳤다" else "보통이다"
   override def airSpeedVelocity: Int = 40 - 2 * numberOfCoconuts
 }
 
-class NorwegianBlueParrot(voltage: Int, isNailed: Boolean) extends Bird("노르웨이 파랑 앵무", 0, voltage, isNailed) {
+class NorwegianBlueParrot(voltage: Int, isNailed: Boolean) extends Bird("노르웨이 파랑 앵무") {
   override def plumage: String = if (voltage > 100) "그을렸다" else "예쁘다"
   override def airSpeedVelocity: Int = if isNailed then 0 else 10 + voltage / 10
 }
