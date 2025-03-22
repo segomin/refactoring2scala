@@ -24,11 +24,10 @@ class Rating(val voyage: Voyage, val history: List[History]) {
     var result = 1
     if (history.length < 5) result += 4
     result += history.count(_.profit < 0)
-    if (voyage.zone == "중국" && hasChina()) result -= 2
     Math.max(result, 0)
   }
 
-  def hasChina(): Boolean = {
+  def hasChinaHistory(): Boolean = {
     history.exists(_.zone == "중국")
   }
 
@@ -36,7 +35,7 @@ class Rating(val voyage: Voyage, val history: List[History]) {
     var result = 2
     if (voyage.zone == "중국") result += 1
     if (voyage.zone == "동인도") result += 1
-    if (voyage.zone == "중국" && hasChina()) {
+    if (voyage.zone == "중국" && hasChinaHistory()) {
       result += 3
       if (history.length > 10) result += 1
       if (voyage.length > 12) result += 1
@@ -50,11 +49,18 @@ class Rating(val voyage: Voyage, val history: List[History]) {
   }
 }
 
+class ExperiencedChinaRating(voyage: Voyage, history: List[History]) extends Rating(voyage, history) {
+  override def captainHistoryRisk(): Int = {
+    val result = super.captainHistoryRisk() -2
+    Math.max(result, 0)
+  }
+}
+
 // main
 @main def main(): Unit = {
   val voyageChina = Voyage("중국", 13)
   val history = List(History("동인도", 5), History("서인도", 15), History("중국", -2), History("서아프리카", 7))
-  val racingChina = new Rating(voyageChina, history)
+  val racingChina = new ExperiencedChinaRating(voyageChina, history)
   assert(racingChina.voyageProfitFactor() == 7)
   assert(racingChina.voyageRisk() == 12)
   assert(racingChina.captainHistoryRisk() == 4)
