@@ -2,6 +2,7 @@ package org.sangho.refac2scala
 package ch10_4_2
 
 case class Voyage(zone: String, length: Int)
+
 case class History(zone: String, profit: Int)
 
 class Rating(val voyage: Voyage, val history: List[History]) {
@@ -51,23 +52,31 @@ class Rating(val voyage: Voyage, val history: List[History]) {
 
 class ExperiencedChinaRating(voyage: Voyage, history: List[History]) extends Rating(voyage, history) {
   override def captainHistoryRisk(): Int = {
-    val result = super.captainHistoryRisk() -2
+    val result = super.captainHistoryRisk() - 2
     Math.max(result, 0)
   }
+}
+
+def createRating(voyage: Voyage, history: List[History]) = {
+  if (voyage.zone == "중국" && history.exists(_.zone == "중국"))
+    new ExperiencedChinaRating(voyage, history)
+  else
+    new Rating(voyage, history)
 }
 
 // main
 @main def main(): Unit = {
   val voyageChina = Voyage("중국", 13)
   val history = List(History("동인도", 5), History("서인도", 15), History("중국", -2), History("서아프리카", 7))
-  val racingChina = new ExperiencedChinaRating(voyageChina, history)
+  val racingChina = createRating(voyageChina, history)
   assert(racingChina.voyageProfitFactor() == 7)
   assert(racingChina.voyageRisk() == 12)
   assert(racingChina.captainHistoryRisk() == 4)
   assert(racingChina.value() == "A")
 
   val voyageIndia = Voyage("서인도", 10)
-  val racingIndia = new Rating(voyageIndia, history)
+  val racingIndia = createRating(voyageIndia, history)
+
   assert(racingIndia.voyageProfitFactor() == 2)
   assert(racingIndia.voyageRisk() == 5)
   assert(racingIndia.captainHistoryRisk() == 6)
