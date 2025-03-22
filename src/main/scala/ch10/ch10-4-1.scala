@@ -4,21 +4,36 @@ package ch10_4_1
 class Bird(val kind: String, val numberOfCoconuts: Int, val voltage: Int, val isNailed: Boolean = false) {
   def plumage: String = {
     kind match {
-      case "유럽 제비" => "보통이다"
-      case "아프리카 제비" => if (numberOfCoconuts > 2) "지쳤다" else "보통이다"
-      case "노르웨이 파랑 앵무" => if (voltage > 100) "그을렸다" else "예쁘다"
+      case "유럽 제비" => throw new RuntimeException("오류 발생")
+      case "아프리카 제비" => throw new RuntimeException("오류 발생")
+      case "노르웨이 파랑 앵무" => throw new RuntimeException("오류 발생")
       case _ => "알 수 없다"
     }
   }
 
   def airSpeedVelocity: Int = {
     kind match {
-      case "유럽 제비" => 35
-      case "아프리카 제비" => 40 - 2 * numberOfCoconuts
-      case "노르웨이 파랑 앵무" => if isNailed then 0 else 10 + voltage / 10
+      case "유럽 제비" => throw new RuntimeException("오류 발생")
+      case "아프리카 제비" => throw new RuntimeException("오류 발생")
+      case "노르웨이 파랑 앵무" => throw new RuntimeException("오류 발생")
       case _ => 0
     }
   }
+}
+
+
+class EuropeanSwallow extends Bird("유럽 제비", 0, 0) {
+  override def plumage: String = "보통이다"
+  override def airSpeedVelocity: Int = 35
+}
+class AfricanSwallow(numberOfCoconuts: Int) extends Bird("아프리카 제비", numberOfCoconuts, 0) {
+  override def plumage: String = if (numberOfCoconuts > 2) "지쳤다" else "보통이다"
+  override def airSpeedVelocity: Int = 40 - 2 * numberOfCoconuts
+}
+
+class NorwegianBlueParrot(voltage: Int, isNailed: Boolean) extends Bird("노르웨이 파랑 앵무", 0, voltage, isNailed) {
+  override def plumage: String = if (voltage > 100) "그을렸다" else "예쁘다"
+  override def airSpeedVelocity: Int = if isNailed then 0 else 10 + voltage / 10
 }
 
 def plumages(birds: List[Bird]): Map[String, Bird] = {
@@ -39,10 +54,10 @@ def airSpeedVelocity(bird: Bird): Int = bird.airSpeedVelocity
 
 // main
 @main def main(): Unit = {
-  val europeanSwallow = new Bird("유럽 제비", 0, 0)
-  val africanSwallowNormal = new Bird("아프리카 제비", 2, 0)
-  val africanSwallowTired = new Bird("아프리카 제비", 3, 0)
-  val norwegianBlueParrot = new Bird("노르웨이 파랑 앵무", 0, 120, false)
+  val europeanSwallow = new EuropeanSwallow()
+  val africanSwallowNormal = new AfricanSwallow(2)
+  val africanSwallowTired = new AfricanSwallow(3)
+  val norwegianBlueParrot = new NorwegianBlueParrot(120, false)
 
   assert(plumage(europeanSwallow) == "보통이다")
   assert(plumage(africanSwallowNormal) == "보통이다")
