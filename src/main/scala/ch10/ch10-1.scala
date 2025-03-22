@@ -12,12 +12,13 @@ case class Plan(summerStart: Date, summerEnd: Date, summerRate: Int, regularRate
 def chargeOf(date: Date, plan: Plan, quantity: Int): Int = {
   def summer = !date.isBefore(plan.summerStart) && !date.isAfter(plan.summerEnd)
   def summerCharge = quantity * plan.summerRate
+  def regularCharge = quantity * plan.regularRate + plan.regularServiceCharge
 
   var charge: Int = 0
   if (summer)
     charge = summerCharge
   else
-    charge = quantity * plan.regularRate + plan.regularServiceCharge
+    charge = regularCharge
   charge
 }
 
