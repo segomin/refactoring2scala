@@ -8,10 +8,8 @@ def disabilityAmount(employee: Employee): Int = {
     || employee.monthsDisabled > 12
     || employee.isPartTime
 
-  if (employee.onVacation) {
-    if (employee.seniority > 10) {
-      return 1
-    }
+  if (employee.onVacation && employee.seniority > 10) {
+     return 1
   }
 
   if (isNotEligibleForDisability) return 0
