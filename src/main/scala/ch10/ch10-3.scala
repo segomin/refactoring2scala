@@ -12,15 +12,12 @@ def payAmount(employee: Employee): Amount = {
     Amount(employee.salary, "NOR")
   }
 
-  if (employee.isSeparated) { // 퇴직한 직원인가?
-    result = Amount(0, "SEP")
+  if (employee.isSeparated) return Amount(0, "SEP")
+  if (employee.isRetired) { // 은퇴한 직원인가?
+    result = Amount(0, "RET")
   } else {
-    if (employee.isRetired) { // 은퇴한 직원인가?
-      result = Amount(0, "RET")
-    } else {
-      // 급여 계산 로직
-      result = someFinalComputation(employee)
-    }
+    // 급여 계산 로직
+    result = someFinalComputation(employee)
   }
   result
 }
