@@ -1,20 +1,25 @@
 package org.sangho.refac2scala
 package ch10_7
 
-def sendVillainAlert(people: List[String], sendAlert: Runnable): Unit = {
-  var found = false
-  for (p <- people) {
-    if (!found) {
+def sendVillainAlert(people: List[String], sendAlertRun: Runnable): Unit = {
+  def sendAlert(): Unit = {
+    sendAlertRun.run()
+  }
+
+  def checkForMiscreants(people: List[String]): Unit = {
+    for (p <- people) {
       if (p == "조커") {
-        sendAlert.run()
-        found = true
+        sendAlert()
+        return
       }
       if (p == "사루만") {
-        sendAlert.run()
-        found = true
+        sendAlert()
+        return
       }
     }
   }
+
+  checkForMiscreants(people)
 }
 
 // main
