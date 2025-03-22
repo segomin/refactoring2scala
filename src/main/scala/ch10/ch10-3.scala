@@ -13,12 +13,9 @@ def payAmount(employee: Employee): Amount = {
   }
 
   if (employee.isSeparated) return Amount(0, "SEP")
-  if (employee.isRetired) { // 은퇴한 직원인가?
-    result = Amount(0, "RET")
-  } else {
-    // 급여 계산 로직
-    result = someFinalComputation(employee)
-  }
+  if (employee.isRetired) return Amount(0, "RET")
+  // 급여 계산 로직
+  result = someFinalComputation(employee)
   result
 }
 
