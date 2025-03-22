@@ -42,10 +42,14 @@ class Rating(val voyage: Voyage, val history: List[History]) {
 
   def voyageAndHistoryLengthFactor(): Int = {
     var result: Int = 0
-    if (history.length > 8) result += 1
-    if (voyage.length > 14) result -= 1
+    result += historyLengthFactor()
+    result += voyageLengthFactor()
     result
   }
+
+  def historyLengthFactor(): Int = if (history.length > 8) 1 else 0
+
+  def voyageLengthFactor(): Int = if (voyage.length > 14) -1 else 0
 }
 
 class ExperiencedChinaRating(voyage: Voyage, history: List[History]) extends Rating(voyage, history) {
@@ -56,7 +60,15 @@ class ExperiencedChinaRating(voyage: Voyage, history: List[History]) extends Rat
 
   override def voyageAndHistoryLengthFactor(): Int = {
     var result: Int = 3
-    if (history.length > 10) result += 1
+    result += historyLengthFactor()
+    result += voyageLengthFactor()
+    result
+  }
+
+  override def historyLengthFactor(): Int = if (history.length > 10) 1 else 0
+
+  override def voyageLengthFactor(): Int = {
+    var result = 0
     if (voyage.length > 12) result += 1
     if (voyage.length > 18) result -= 1
     result
@@ -72,19 +84,19 @@ def createRating(voyage: Voyage, history: List[History]) = {
 
 // main
 @main def main(): Unit = {
-  val voyageChina = Voyage("중국", 13)
+  val voyageChina = Voyage("중국", 14)
   val history = List(History("동인도", 5), History("서인도", 15), History("중국", -2), History("서아프리카", 7))
   val racingChina = createRating(voyageChina, history)
   assert(racingChina.voyageProfitFactor() == 7)
-  assert(racingChina.voyageRisk() == 12)
+  assert(racingChina.voyageRisk() == 13)
   assert(racingChina.captainHistoryRisk() == 4)
-  assert(racingChina.value() == "A")
+  assert(racingChina.value() == "B")
 
-  val voyageIndia = Voyage("서인도", 10)
+  val voyageIndia = Voyage("서인도", 19)
   val racingIndia = createRating(voyageIndia, history)
 
-  assert(racingIndia.voyageProfitFactor() == 2)
-  assert(racingIndia.voyageRisk() == 5)
+  assert(racingIndia.voyageProfitFactor() == 1)
+  assert(racingIndia.voyageRisk() == 14)
   assert(racingIndia.captainHistoryRisk() == 6)
   assert(racingIndia.value() == "B")
 }
