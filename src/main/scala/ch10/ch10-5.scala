@@ -12,6 +12,8 @@ class Customer(val name: String, __paymentHistory: PaymentHistory = PaymentHisto
   def paymentHistory_=(arg: PaymentHistory): Unit = _paymentHistory = arg
 
   def isKindOf(arg: String): Boolean = arg == name
+
+  def isUnknown: Boolean = isKindOf("미확인 고객")
 }
 
 case class PaymentHistory(weeksDelinquentInLastYear: Int)
@@ -30,27 +32,27 @@ case class Registry(billingPlans: BillingPlans)
 
 def client1(site: Site): String = {
   val customer = site.customer
-  val customerName = if (customer.isKindOf("미확인 고객")) "거주자" else customer.name
+  val customerName = if (customer.isUnknown) "거주자" else customer.name
   customerName
 }
 
 def client2(site: Site): String = {
   val registry = Registry(BillingPlans())
   val customer = site.customer
-  val plan = if (customer.isKindOf("미확인 고객")) registry.billingPlans.basic else customer.billingPlan
+  val plan = if (customer.isUnknown) registry.billingPlans.basic else customer.billingPlan
   plan
 }
 
 def client3(site: Site, newPlan: String): Unit = {
   val customer = site.customer
-  if (!customer.isKindOf("미확인 고객")) {
+  if (!customer.isUnknown) {
     customer.billingPlan = newPlan
   }
 }
 
 def client4(site: Site): Int = {
   val customer = site.customer
-  val weeksDelinquent = if (customer.isKindOf("미확인 고객")) {
+  val weeksDelinquent = if (customer.isUnknown) {
     0
   } else {
     customer.paymentHistory.weeksDelinquentInLastYear
