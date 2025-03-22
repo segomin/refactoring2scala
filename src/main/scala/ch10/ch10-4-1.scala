@@ -1,7 +1,25 @@
 package org.sangho.refac2scala
 package ch10_4_1
 
-class Bird(val kind: String, val numberOfCoconuts: Int, val voltage: Int, val isNailed: Boolean = false)
+class Bird(val kind: String, val numberOfCoconuts: Int, val voltage: Int, val isNailed: Boolean = false) {
+  def plumage: String = {
+    kind match {
+      case "유럽 제비" => "보통이다"
+      case "아프리카 제비" => if (numberOfCoconuts > 2) "지쳤다" else "보통이다"
+      case "노르웨이 파랑 앵무" => if (voltage > 100) "그을렸다" else "예쁘다"
+      case _ => "알 수 없다"
+    }
+  }
+
+  def airSpeedVelocity: Int = {
+    kind match {
+      case "유럽 제비" => 35
+      case "아프리카 제비" => 40 - 2 * numberOfCoconuts
+      case "노르웨이 파랑 앵무" => if isNailed then 0 else 10 + voltage / 10
+      case _ => 0
+    }
+  }
+}
 
 def plumages(birds: List[Bird]): Map[String, Bird] = {
   birds.map(bird => bird.kind -> bird).toMap
@@ -13,24 +31,10 @@ def speeds(birds: List[Bird]): Map[String, Int] = {
 
 
 // 깃털 상태
-def plumage(bird: Bird): String = {
-  bird.kind match {
-    case "유럽 제비" => "보통이다"
-    case "아프리카 제비" => if (bird.numberOfCoconuts > 2) "지쳤다" else "보통이다"
-    case "노르웨이 파랑 앵무" => if (bird.voltage > 100) "그을렸다" else "예쁘다"
-    case _ => "알 수 없다"
-  }
-}
+def plumage(bird: Bird): String = bird.plumage
 
 // 비행 속도
-def airSpeedVelocity(bird: Bird): Int = {
-  bird.kind match {
-    case "유럽 제비" => 35
-    case "아프리카 제비" => 40 - 2 * bird.numberOfCoconuts
-    case "노르웨이 파랑 앵무" => if bird.isNailed then 0 else 10 + bird.voltage / 10
-    case _ => 0
-  }
-}
+def airSpeedVelocity(bird: Bird): Int = bird.airSpeedVelocity
 
 
 // main
