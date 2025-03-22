@@ -13,7 +13,11 @@ class Customer(val name: String, __paymentHistory: PaymentHistory = PaymentHisto
 
   def isKindOf(arg: String): Boolean = arg == name
 
-  def isUnknown: Boolean = isKindOf("미확인 고객")
+  def isUnknown: Boolean = false
+}
+
+class UnknownCustomer extends Customer("미확인 고객") {
+  override def isUnknown: Boolean = true
 }
 
 case class PaymentHistory(weeksDelinquentInLastYear: Int)
@@ -21,7 +25,7 @@ case class PaymentHistory(weeksDelinquentInLastYear: Int)
 class Site(__customer: Customer) {
   private var _customer: Customer = __customer
 
-  def customer: Customer = _customer
+  def customer: Customer = if _customer.isKindOf("미확인 고객") then new UnknownCustomer else _customer
 
   def customer_=(arg: Customer): Unit = _customer = arg
 }
