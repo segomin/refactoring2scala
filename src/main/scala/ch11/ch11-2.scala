@@ -10,13 +10,8 @@ class Person(name: String, var salary: Money) {
 }
 
 // simple case
-
-def tenPercentRaise(person: Person): Unit = {
-  person.salary = person.salary.multiply(1.1)
-}
-
-def fivePercentRaise(person: Person): Unit = {
-  person.salary = person.salary.multiply(1.05)
+def raise(person: Person, factor: Double): Unit = {
+  person.salary = person.salary.multiply(factor)
 }
 
 // complicate case
@@ -36,10 +31,10 @@ def baseCharge(usage: Int): Money = {
 @main def main(): Unit = {
   // simple case
   val person1 = new Person("Alice", Money(1000))
-  tenPercentRaise(person1)
+  raise(person1, 1.1)
   assert(person1.salary.amount == 1100.0)
   val person2 = new Person("Bob", Money(2000))
-  fivePercentRaise(person2)
+  raise(person2, 1.05)
   assert(person2.salary.amount == 2100.0)
 
   // complicate case
