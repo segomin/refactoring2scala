@@ -1,15 +1,13 @@
 package org.sangho.refac2scala
-package ch11_4
+package ch11_4_2
 
 case class TemperatureRange(low: Int, high: Int) {
   def contains(temp: Int): Boolean = temp >= low && temp <= high
 }
 
 class HeatingPlan(val temperatureRange: TemperatureRange) {
-
-  def withinRange(numberRange: TemperatureRange): Boolean = {
-    numberRange.low >= temperatureRange.low && numberRange.high <= temperatureRange.high
-  }
+  def withinRange(bottom: Int, top: Int): Boolean =
+    bottom >= temperatureRange.low && top <= temperatureRange.high
 }
 
 class Room(
@@ -19,7 +17,9 @@ class Room(
 }
 
 def test (room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
-  if (!plan.withinRange(room.daysTempRange)) {
+  val low = room.daysTempRange.low
+  val high = room.daysTempRange.high
+  if (!plan.withinRange(low, high)) {
     alserts.apply("방 온도가 지정 범위를 벗어났습니다.")
   }
 }
