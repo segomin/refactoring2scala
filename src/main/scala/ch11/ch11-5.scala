@@ -4,11 +4,12 @@ package ch11_5
 class Order(val quantity: Int, val itemPrice: Double) {
   def finalPrice(): Double = {
     val basePrice = this.quantity * this.itemPrice
-    val discountLevel = if (basePrice > 100) 2 else 1
-    this.discountPrice(basePrice, discountLevel)
+    this.discountPrice(basePrice, discountLevel(basePrice))
   }
 
-  def discountPrice(basePrice: Double, discountLevel: Int): Double = {
+  private def discountLevel(basePrice: Double) = if (basePrice > 100) 2 else 1
+
+  private def discountPrice(basePrice: Double, discountLevel: Int): Double = {
     discountLevel match
       case 1 => basePrice * 0.95
       case 2 => basePrice * 0.9
