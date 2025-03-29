@@ -6,7 +6,7 @@ trait Alarmable {
 }
 
 def alertForMiscreant(people: List[String], alarmable: Alarmable): Unit = {
-  if (people.exists(p => p == "조커" || p == "사루만")) {
+  if (findMiscreant(people) != "") {
     alarmable.setOffAlarms()
   }
 }
