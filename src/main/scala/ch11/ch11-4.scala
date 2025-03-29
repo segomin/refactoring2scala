@@ -1,8 +1,6 @@
 package org.sangho.refac2scala
 package ch11
 
-import java.time.LocalDate
-
 case class TemperatureRange(low: Int, high: Int) {
   def contains(temp: Int): Boolean = temp >= low && temp <= high
 }
@@ -10,6 +8,10 @@ case class TemperatureRange(low: Int, high: Int) {
 class HeatingPlan(val temperatureRange: TemperatureRange) {
   def withinRange(bottom: Int, top: Int): Boolean =
     bottom >= temperatureRange.low && top <= temperatureRange.high
+
+  def xxNEWwithinRange(numberRange: TemperatureRange): Boolean = {
+    this.withinRange(numberRange.low, numberRange.high)
+  }
 }
 
 class Room(
@@ -21,7 +23,7 @@ class Room(
 def test (room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
   val low = room.daysTempRange.low
   val high = room.daysTempRange.high
-  if (!plan.withinRange(low, high)) {
+  if (!plan.xxNEWwithinRange(TemperatureRange(low, high))) {
     alserts.apply("방 온도가 지정 범위를 벗어났습니다.")
   }
 }
