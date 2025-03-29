@@ -6,13 +6,11 @@ case class TemperatureRange(low: Int, high: Int) {
 }
 
 class HeatingPlan(val temperatureRange: TemperatureRange) {
-  def withinRange(bottom: Int, top: Int): Boolean =
-    bottom >= temperatureRange.low && top <= temperatureRange.high
 
-  def xxNEWwithinRange(tempRange: TemperatureRange) = {
+  def withinRange(tempRange: TemperatureRange) = {
     val low = tempRange.low
     val high = tempRange.high
-    this.withinRange(low, high)
+    low >= temperatureRange.low && high <= temperatureRange.high
   }
 }
 
@@ -24,7 +22,7 @@ class Room(
 
 def test(room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
   val tempRange = room.daysTempRange
-  val isWithinRange: Boolean = plan.xxNEWwithinRange(tempRange)
+  val isWithinRange: Boolean = plan.withinRange(tempRange)
   if (!isWithinRange) {
     alserts.apply("방 온도가 지정 범위를 벗어났습니다.")
   }
