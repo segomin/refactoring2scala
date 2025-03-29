@@ -26,18 +26,24 @@ def deliveryDate(order: Order, isRush: Boolean): LocalDate = {
   if (isRush) result = result.minusDays(1)
   result
 }
+def rushDeliveryDate(order: Order) = {
+  deliveryDate(order, true)
+}
+def regularDeliveryDate(order: Order) = {
+  deliveryDate(order, false)
+}
 
 // main
 @main def main(): Unit = {
   val today = LocalDate.of(2025, 3, 30)
-  assert(deliveryDate(Order(today, "MA"), true) == today.plusDays(4))
-  assert(deliveryDate(Order(today, "CT"), true) == today.plusDays(2))
-  assert(deliveryDate(Order(today, "NY"), true) == today.plusDays(3))
-  assert(deliveryDate(Order(today, "TX"), true) == today.plusDays(4))
-  assert(deliveryDate(Order(today, "ME"), true) == today.plusDays(4))
-  assert(deliveryDate(Order(today, "MA"), false) == today.plusDays(6))
-  assert(deliveryDate(Order(today, "NY"), false) == today.plusDays(4))
-  assert(deliveryDate(Order(today, "ME"), false) == today.plusDays(5))
-  assert(deliveryDate(Order(today, "NH"), false) == today.plusDays(5))
-  assert(deliveryDate(Order(today, "TX"), false) == today.plusDays(6))
+  assert(rushDeliveryDate(Order(today, "MA")) == today.plusDays(4))
+  assert(rushDeliveryDate(Order(today, "CT")) == today.plusDays(2))
+  assert(rushDeliveryDate(Order(today, "NY")) == today.plusDays(3))
+  assert(rushDeliveryDate(Order(today, "TX")) == today.plusDays(4))
+  assert(rushDeliveryDate(Order(today, "ME")) == today.plusDays(4))
+  assert(regularDeliveryDate(Order(today, "MA")) == today.plusDays(6))
+  assert(regularDeliveryDate(Order(today, "NY")) == today.plusDays(4))
+  assert(regularDeliveryDate(Order(today, "ME")) == today.plusDays(5))
+  assert(regularDeliveryDate(Order(today, "NH")) == today.plusDays(5))
+  assert(regularDeliveryDate(Order(today, "TX")) == today.plusDays(6))
 }
