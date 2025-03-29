@@ -25,14 +25,6 @@ def regularDeliveryDate(order: Order) = {
     deliveryTime = 4
   order.placedOn.plusDays(2 + deliveryTime);
 }
-def deliveryDate(order: Order, isRush: Boolean): LocalDate = {
-  if (isRush) {
-    rushDeliveryDate(order)
-  } else {
-    regularDeliveryDate(order)
-  }
-}
-
 
 // main
 @main def main(): Unit = {
