@@ -5,18 +5,17 @@ trait Alarmable {
   def setOffAlarms(): Unit
 }
 
-def alertForMiscreant(people: List[String], alarmable: Alarmable): String = {
+def alertForMiscreant(people: List[String], alarmable: Alarmable): Unit = {
   for (p <- people) {
     if (p == "조커") {
       alarmable.setOffAlarms()
-      return "조커"
+      return
     }
     if (p == "사루만") {
       alarmable.setOffAlarms()
-      return "사루만"
+      return
     }
   }
-  ""
 }
 
 def findMiscreant(people: List[String]): String = {
@@ -34,9 +33,9 @@ def findMiscreant(people: List[String]): String = {
 // main
 @main def main(): Unit = {
   class MockAlarmable extends Alarmable {
-    var hasAlert = false
+    var hasAlert = 0
     def setOffAlarms(): Unit = {
-      hasAlert = true
+      hasAlert += 1
     }
   }
 
@@ -45,12 +44,12 @@ def findMiscreant(people: List[String]): String = {
   val alert1 = findMiscreant(people1)
   alertForMiscreant(people1, mockAlarm1)
   assert(alert1 == "조커")
-  assert(mockAlarm1.hasAlert)
+  assert(mockAlarm1.hasAlert == 1)
 
   val people2 = List("배트맨", "슈퍼맨", "알라딘")
   val mockAlarm2 = new MockAlarmable
   val alert2 = findMiscreant(people2)
   alertForMiscreant(people2, mockAlarm2)
   assert(alert2 == "")
-  assert(!mockAlarm2.hasAlert)
+  assert(mockAlarm2.hasAlert == 0)
 }
