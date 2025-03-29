@@ -6,29 +6,12 @@ trait Alarmable {
 }
 
 def alertForMiscreant(people: List[String], alarmable: Alarmable): Unit = {
-  for (p <- people) {
-    if (p == "조커") {
-      alarmable.setOffAlarms()
-      return
-    }
-    if (p == "사루만") {
-      alarmable.setOffAlarms()
-      return
-    }
+  if (people.exists(p => p == "조커" || p == "사루만")) {
+    alarmable.setOffAlarms()
   }
 }
 
-def findMiscreant(people: List[String]): String = {
-  for (p <- people) {
-    if (p == "조커") {
-      return "조커"
-    }
-    if (p == "사루만") {
-      return "사루만"
-    }
-  }
-  ""
-}
+def findMiscreant(people: List[String]): String = people.find(p => p == "조커" || p == "사루만").getOrElse("")
 
 // main
 @main def main(): Unit = {
