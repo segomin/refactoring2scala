@@ -5,25 +5,31 @@ import java.time.LocalDate
 
 case class Order(placedOn: LocalDate, deliveryState: String)
 
+def rushDeliveryDate(order: Order) = {
+  var deliveryTime: Int = 0
+  if (List("MA", "CT").contains(order.deliveryState))
+    deliveryTime = 1
+  else if (List("NY", "NH").contains(order.deliveryState))
+    deliveryTime = 2
+  else
+    deliveryTime = 3
+  order.placedOn.plusDays(1 + deliveryTime);
+}
+def regularDeliveryDate(order: Order) = {
+  var deliveryTime: Int = 0
+  if (List("MA", "CT", "NY").contains(order.deliveryState))
+    deliveryTime = 2
+  else if (List("ME", "NH").contains(order.deliveryState))
+    deliveryTime = 3
+  else
+    deliveryTime = 4
+  order.placedOn.plusDays(2 + deliveryTime);
+}
 def deliveryDate(order: Order, isRush: Boolean): LocalDate = {
   if (isRush) {
-    var deliveryTime: Int = 0
-    if (List("MA", "CT").contains(order.deliveryState))
-      deliveryTime = 1
-    else if (List("NY", "NH").contains(order.deliveryState))
-      deliveryTime = 2
-    else
-      deliveryTime = 3
-    order.placedOn.plusDays(1 + deliveryTime);
+    rushDeliveryDate(order)
   } else {
-    var deliveryTime: Int = 0
-    if (List("MA", "CT", "NY").contains(order.deliveryState))
-      deliveryTime = 2
-    else if (List("ME", "NH").contains(order.deliveryState))
-      deliveryTime = 3
-    else
-      deliveryTime = 4
-    order.placedOn.plusDays(2 + deliveryTime);
+    regularDeliveryDate(order)
   }
 }
 
