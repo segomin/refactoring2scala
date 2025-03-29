@@ -21,9 +21,7 @@ class Room(
 }
 
 def test (room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
-  val low = room.daysTempRange.low
-  val high = room.daysTempRange.high
-  if (!plan.xxNEWwithinRange(TemperatureRange(low, high))) {
+  if (!plan.xxNEWwithinRange(room.daysTempRange)) {
     alserts.apply("방 온도가 지정 범위를 벗어났습니다.")
   }
 }
