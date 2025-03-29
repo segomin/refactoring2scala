@@ -16,14 +16,19 @@ class Room(
   def daysTempRange: TemperatureRange = _temperatureRange
 }
 
-def test (room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
+def test(room: Room, plan: HeatingPlan, alserts: String => Unit): Unit = {
   val tempRange = room.daysTempRange
-  val low = tempRange.low
-  val high = tempRange.high
-  val isWithinRange = plan.withinRange(low, high)
+  val isWithinRange: Boolean = xxNEWwithinRange(plan, tempRange)
   if (!isWithinRange) {
     alserts.apply("방 온도가 지정 범위를 벗어났습니다.")
   }
+}
+
+def xxNEWwithinRange(plan: HeatingPlan, tempRange: TemperatureRange) = {
+  val low = tempRange.low
+  val high = tempRange.high
+  val isWithinRange = plan.withinRange(low, high)
+  isWithinRange
 }
 
 
