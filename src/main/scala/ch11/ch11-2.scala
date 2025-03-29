@@ -24,7 +24,7 @@ def topBand(usage: Int) = if (usage > 200) usage - 200 else 0
 
 def baseCharge(usage: Int): Money = {
   if (usage < 0) return usd(0)
-  val amount = bottomBand(usage) * 0.03 + withinBand(usage, 100, 200) * 0.05 + topBand(usage) * 0.07
+  val amount = withinBand(usage, 0, 100) * 0.03 + withinBand(usage, 100, 200) * 0.05 + withinBand(usage, 200, Int.MaxValue) * 0.07
   usd(amount)
 }
 
