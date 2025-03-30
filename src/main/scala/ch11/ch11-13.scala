@@ -15,13 +15,16 @@ class ResourcePool(init: Int = 3) {
 
   def get() : Resource = {
     var result: Resource = null
-    try {
-      result = available.dequeue()
+    if (available.isEmpty) {
+      result = Resource(s"Additional-${allocated.size + 1}")
       allocated.append(result)
-    } catch {
-      case e: NoSuchElementException =>
-        result = Resource(s"Additional-${allocated.size + 1}")
+    } else {
+      try {
+        result = available.dequeue()
         allocated.append(result)
+      } catch {
+        case e: NoSuchElementException => 
+      }
     }
     result
   }
