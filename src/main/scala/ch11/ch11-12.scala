@@ -1,6 +1,8 @@
 package org.sangho.refac2scala
 package ch11_12
 
+import org.scalatest.Assertions._
+
 case class ShippingRules(data: String) {
   def shippingCosts(cost: Double): Double = {
     data match {
@@ -30,20 +32,18 @@ class OrderProcessingError(val code: Int) extends Exception(s"주문 처리 오�
   def name = "OrderProcessingError"
 }
 
-def localShippingRules(country: String): Either[Int, ShippingRules] = {
+def localShippingRules(country: String): ShippingRules = {
   val data = countryData.shippingRules.getOrElse(country, null)
   if (data != null) {
-    Right(ShippingRules(data))
+    ShippingRules(data)
   } else {
-    Left(-23)
+    throw new OrderProcessingError(-23)
   }
 }
 
-def calculateShippingCosts(order: Order): Either[Int, Double] = {
+def calculateShippingCosts(order: Order): Double = {
   val shippingRules = localShippingRules(order.country)
-  shippingRules match
-    case Right(rules) => Right(rules.shippingCosts(order.shippingCosts))
-    case Left(errorCode) => Left(errorCode)
+  shippingRules.shippingCosts(order.shippingCosts)
 }
 
 // main
@@ -51,9 +51,11 @@ def calculateShippingCosts(order: Order): Either[Int, Double] = {
   // 최상위 로직 생략
   // val status = calculateShippingCosts(Order("US", 100))
   // if (status.isLeft) { errList.push(...) }
-  assert(calculateShippingCosts(Order("US", 100)) == Right(100.0))
-  assert(calculateShippingCosts(Order("CA", 100)) == Right(150.0))
-  assert(calculateShippingCosts(Order("KR", 100)) == Right(200.0))
+  assert(calculateShippingCosts(Order("US", 100)) == 100.0)
+  assert(calculateShippingCosts(Order("CA", 100)) == 150.0)
+  assert(calculateShippingCosts(Order("KR", 100)) == 200.0)
   // should throw an error
-  assert(calculateShippingCosts(Order("XX", 100)) == Left(-23))
+  assertThrows[OrderProcessingError] {
+    calculateShippingCosts(Order("XX", 100))
+  }
 }
