@@ -14,8 +14,8 @@ class ScoringGuide {
   }
 }
 
-class Score {
-  def execute(candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide): Int = {
+class Score (candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide) {
+  def execute(): Int = {
     var result = 0
     var healthLevel = 0
     var highMedicalRiskFlag = false
@@ -36,7 +36,7 @@ class Score {
 }
 
 def score(candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide): Int = {
-  new Score().execute(candidate, medicalExam, scoringGuide)
+  new Score(candidate, medicalExam, scoringGuide).execute()
 }
 
 // main
