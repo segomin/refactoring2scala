@@ -17,11 +17,10 @@ class ResourcePool(init: Int = 3) {
     var result: Resource = null
     if (available.isEmpty) {
       result = Resource(s"Additional-${allocated.size + 1}")
-      allocated.append(result)
     } else {
       result = available.dequeue()
-      allocated.append(result)
     }
+    allocated.append(result)
     result
   }
 }
