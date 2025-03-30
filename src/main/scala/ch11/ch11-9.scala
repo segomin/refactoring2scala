@@ -15,11 +15,11 @@ class ScoringGuide {
 }
 
 class Score (candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide) {
-  def execute(): Int = {
-    var result = 0
-    var healthLevel = 0
-    var highMedicalRiskFlag = false
+  private var result = 0
+  private var healthLevel = 0
+  private var highMedicalRiskFlag = false
 
+  def execute(): Int = {
     if (medicalExam.isSmoker) {
       healthLevel += 10
       highMedicalRiskFlag = true
