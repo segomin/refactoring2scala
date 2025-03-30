@@ -13,16 +13,22 @@ object Employee {
   )
 }
 
-def createEmployee(name: String, typeCode: String): Employee = {
-  new Employee(name, typeCode)
+def createEngineer(name: String): Employee = {
+  new Employee(name, "E")
+}
+def createManager(name: String): Employee = {
+  new Employee(name, "M")
+}
+def createSalesman(name: String): Employee = {
+  new Employee(name, "S")
 }
 
 // main
 @main def main(): Unit = {
-  val martin = createEmployee("Martin", "E")
-  val bob = createEmployee("Bob", "M")
-  val other = createEmployee("Other", "X")
+  val martin = createEngineer("Martin")
+  val bob = createManager("Bob")
+  val other = createSalesman("Other")
   assert(martin.kind() == "Employee")
   assert(bob.kind() == "Manager")
-  assert(other.kind() == "Unknown")
+  assert(other.kind() == "Salesman")
 }
