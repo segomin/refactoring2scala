@@ -13,13 +13,8 @@ class ResourcePool(init: Int = 3) {
     available.enqueue(Resource(s"Resource-$i"))
   }
 
-  def get() : Resource = {
-    var result: Resource = null
-    if (available.isEmpty) {
-      result = Resource(s"Additional-${allocated.size + 1}")
-    } else {
-      result = available.dequeue()
-    }
+  def get(): Resource = {
+    val result = if available.isEmpty then Resource(s"Additional-${allocated.size + 1}") else available.dequeue()
     allocated.append(result)
     result
   }
