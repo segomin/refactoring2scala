@@ -4,31 +4,36 @@ package ch11_11
 case class Point(x: Double, y: Double, elevation: Double, elapse: Double)
 
 def calculatePace(points: List[Point]): Double = {
-  var totalAscent: Double = 0
-  var totalTime: Double = 0
-  var totalDistance: Double = 0
-
-  def calculateAscent(): Unit = {
+  def calculateAscent(): Double = {
+    var result: Double = 0
     for(i <- 1 until points.length) {
       val verticalChange = points(i).elevation - points(i - 1).elevation
-      totalAscent += verticalChange
+      result += verticalChange
     }
+    result
   }
-  def calculateTime(): Unit = {
-    for(i <- 1 until points.length) {
+
+  def calculateTime(): Double = {
+    var totalTime: Double = 0
+    for (i <- 1 until points.length) {
       val timeChange = points(i).elapse - points(i - 1).elapse
       totalTime += timeChange
     }
+    totalTime
   }
-  def calculateDistance(): Unit = {
+
+  def calculateDistance(): Double = {
+    var result: Double = 0
     for(i <- 1 until points.length) {
       val distanceChange = Math.sqrt(Math.pow(points(i).x - points(i - 1).x, 2) + Math.pow(points(i).y - points(i - 1).y, 2))
-      totalDistance += distanceChange
+      result += distanceChange
     }
+    result
   }
-  calculateAscent()
-  calculateTime()
-  calculateDistance()
+
+  val totalAscent = calculateAscent()
+  val totalTime = calculateTime()
+  val totalDistance = calculateDistance()
   val pace = totalTime / 60 / totalDistance
   // 소수점 3까지
   Math.round(pace * 1000.0) / 1000.0
