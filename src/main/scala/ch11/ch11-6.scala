@@ -14,11 +14,7 @@ class Thermostat(var _currentTemperature: Double = 0.0, var _selectedTemperature
 
 class HeatingPlan(val _min: Double, val _max: Double, val thermostat: Thermostat) {
 
-  def targetTemperature: Double = {
-    xxNEWtargetTemperature(thermostat.selectedTemperature)
-  }
-
-  def xxNEWtargetTemperature(selectedTemperature: Double) = {
+  def targetTemperature(selectedTemperature: Double) = {
     if (selectedTemperature > this._max) this._max
     else if (selectedTemperature < this._min) this._min
     else selectedTemperature
@@ -29,9 +25,9 @@ class Room {
   var _heatState: String = "off"
   def setTemperature(thePlan: HeatingPlan): Unit = {
     val thermostat = thePlan.thermostat
-    if (thePlan.xxNEWtargetTemperature(thermostat.selectedTemperature) > thermostat.currentTemperature) {
+    if (thePlan.targetTemperature(thermostat.selectedTemperature) > thermostat.currentTemperature) {
       setToHeat()
-    } else if (thePlan.xxNEWtargetTemperature(thermostat.selectedTemperature) < thermostat.currentTemperature) {
+    } else if (thePlan.targetTemperature(thermostat.selectedTemperature) < thermostat.currentTemperature) {
       setToCool()
     } else {
       setOff()
