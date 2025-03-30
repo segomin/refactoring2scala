@@ -11,8 +11,12 @@ class ChargeCalculator(val customer: Customer, val usage: Int, val provider: Pro
   def charge: Double = baseCharge + provider.connectionCharge
 }
 
+def charge(customer: Customer, usage: Int, provider: Provider): Double = {
+  new ChargeCalculator(customer, usage, provider).charge
+}
+
 // main
 @main def main() = {
-  assert(new ChargeCalculator(Customer(0.03), 100, Provider(0.1)).charge == 3.1)
-  assert(new ChargeCalculator(Customer(0.05), 200, Provider(0.2)).charge == 10.2)
+  assert(charge(Customer(0.03), 100, Provider(0.1)) == 3.1)
+  assert(charge(Customer(0.05), 200, Provider(0.2)) == 10.2)
 }
