@@ -5,14 +5,15 @@ case class Customer(baseRate: Double)
 
 case class Provider(connectionCharge: Double)
 
-class ChargeCalculator(val customer: Customer, val usage: Int, val provider: Provider) {
-  def baseCharge(customer: Customer, usage: Int): Double = customer.baseRate * usage
-
-  def charge(customer: Customer, usage: Int, provider: Provider): Double = baseCharge(customer, usage) + provider.connectionCharge
+class ChargeCalculator {
+  def charge(customer: Customer, usage: Int, provider: Provider): Double = {
+    val baseCharge = customer.baseRate * usage
+    baseCharge + provider.connectionCharge
+  }
 }
 
 def charge(customer: Customer, usage: Int, provider: Provider): Double = {
-  new ChargeCalculator(customer, usage, provider).charge(customer, usage, provider)
+  new ChargeCalculator().charge(customer, usage, provider)
 }
 
 // main
