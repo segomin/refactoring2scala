@@ -15,9 +15,10 @@ class Thermostat(var _currentTemperature: Double = 0.0, var _selectedTemperature
 class HeatingPlan(val _min: Double, val _max: Double, val thermostat: Thermostat) {
 
   def targetTemperature: Double = {
-    if (thermostat.selectedTemperature > this._max) this._max
-    else if (thermostat.selectedTemperature < this._min) this._min
-    else thermostat.selectedTemperature
+    val selectedTemperature = thermostat.selectedTemperature
+    if (selectedTemperature > this._max) this._max
+    else if (selectedTemperature < this._min) this._min
+    else selectedTemperature
   }
 }
 
