@@ -14,23 +14,29 @@ class ScoringGuide {
   }
 }
 
-def score(candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide): Int = {
-  var result = 0
-  var healthLevel = 0
-  var highMedicalRiskFlag = false
+class Score {
+  def execute(candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide): Int = {
+    var result = 0
+    var healthLevel = 0
+    var highMedicalRiskFlag = false
 
-  if (medicalExam.isSmoker) {
-    healthLevel += 10
-    highMedicalRiskFlag = true
+    if (medicalExam.isSmoker) {
+      healthLevel += 10
+      highMedicalRiskFlag = true
+    }
+    var certificationGrade = "regular"
+    if (scoringGuide.stateWithLowCertification(candidate.originState)) {
+      certificationGrade = "low"
+      result -= 5
+    }
+    // 비슷한 코드가 한참 이어짐
+    result -= Math.max(healthLevel - 5, 0)
+    result
   }
-  var certificationGrade = "regular"
-  if (scoringGuide.stateWithLowCertification(candidate.originState)) {
-    certificationGrade = "low"
-    result -= 5
-  }
-  // 비슷한 코드가 한참 이어짐
-  result -= Math.max(healthLevel - 5, 0)
-  result
+}
+
+def score(candidate: Candidate, medicalExam: MedicalExam, scoringGuide: ScoringGuide): Int = {
+  new Score().execute(candidate, medicalExam, scoringGuide)
 }
 
 // main
