@@ -19,12 +19,8 @@ class ResourcePool(init: Int = 3) {
       result = Resource(s"Additional-${allocated.size + 1}")
       allocated.append(result)
     } else {
-      try {
-        result = available.dequeue()
-        allocated.append(result)
-      } catch {
-        case e: NoSuchElementException => 
-      }
+      result = available.dequeue()
+      allocated.append(result)
     }
     result
   }
