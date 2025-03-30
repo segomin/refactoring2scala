@@ -26,6 +26,10 @@ val countryData = new CountryData(ShippingRules.shippingRules)
 
 case class Order(country: String, shippingCosts: Double)
 
+class OrderProcessingError(val code: Int) extends Exception(s"주문 처리 오류: $code") {
+  def name = "OrderProcessingError"
+}
+
 def localShippingRules(country: String): Either[Int, ShippingRules] = {
   val data = countryData.shippingRules.getOrElse(country, null)
   if (data != null) {
@@ -44,8 +48,12 @@ def calculateShippingCosts(order: Order): Either[Int, Double] = {
 
 // main
 @main def main() = {
+  // 최상위 로직 생략
+  // val status = calculateShippingCosts(Order("US", 100))
+  // if (status.isLeft) { errList.push(...) }
   assert(calculateShippingCosts(Order("US", 100)) == Right(100.0))
   assert(calculateShippingCosts(Order("CA", 100)) == Right(150.0))
   assert(calculateShippingCosts(Order("KR", 100)) == Right(200.0))
+  // should throw an error
   assert(calculateShippingCosts(Order("XX", 100)) == Left(-23))
 }
