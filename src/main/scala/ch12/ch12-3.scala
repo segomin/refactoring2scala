@@ -4,9 +4,9 @@ package ch12_3
 import org.scalatest.Assertions._
 
 
-abstract class Party {}
-class Employee(val name: String, val id: String, val monthlyCost: Int) extends Party() {}
-class Department(val name: String, val monthlyCost: Int) extends Party() {}
+abstract class Party (val name: String) {}
+class Employee(name: String, val id: String, val monthlyCost: Int) extends Party(name) {}
+class Department(name: String, val monthlyCost: Int) extends Party(name) {}
 
 // main
 @main def main() = {
