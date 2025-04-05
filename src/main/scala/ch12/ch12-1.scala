@@ -4,17 +4,15 @@ import org.scalatest.Assertions._
 
 trait Party() {
   def monthlyCost: Int
-}
 
-case class Employee(monthlyCost: Int) extends Party {
   def annualCost(): Int = {
     this.monthlyCost * 12
   }
 }
+
+case class Employee(monthlyCost: Int) extends Party {
+}
 case class Department(monthlyCost: Int) extends Party {
-  def totalAnnualCost(): Int = {
-    this.monthlyCost * 12
-  }
 }
 
 // main
@@ -23,5 +21,5 @@ case class Department(monthlyCost: Int) extends Party {
   val department = Department(2000)
 
   assert(employee.annualCost() == 12000)
-  assert(department.totalAnnualCost() == 24000)
+  assert(department.annualCost() == 24000)
 }
