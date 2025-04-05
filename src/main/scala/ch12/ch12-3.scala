@@ -5,8 +5,26 @@ import org.scalatest.Assertions._
 
 
 abstract class Party (val name: String) {}
-class Employee(name: String, val id: String, val monthlyCost: Int) extends Party(name) {}
+class Employee(name: String, val id: String, val monthlyCost: Int) extends Party(name) {
+  def isPrivileged: Boolean = {
+    this.monthlyCost > 1000
+  }
+  def assignCar() = {
+    println(s"Assigning car to $name")
+  }
+}
 class Department(name: String, val monthlyCost: Int) extends Party(name) {}
+
+class Manager(name: String, id: String, monthlyCost: Int) extends Employee(name, id, monthlyCost) {
+  private var _grade: Int = 0
+  def this(name: String, grade: Int, id: String, monthlyCost: Int) = {
+    this(name, id, monthlyCost)
+    this._grade = grade
+    if (isPrivileged) {
+      assignCar()
+    }
+  }
+}
 
 // main
 @main def main() = {
@@ -18,4 +36,8 @@ class Department(name: String, val monthlyCost: Int) extends Party(name) {}
   assertResult("HR")(department.name)
   assertResult(2000)(department.monthlyCost)
   assertResult(24000)(department.monthlyCost * 12)
+
+  val manager = new Manager("Jane Doe", 1, "M123", 1500)
+  assertResult("Jane Doe")(manager.name)
+  assertResult(true)(manager.isPrivileged)
 }
