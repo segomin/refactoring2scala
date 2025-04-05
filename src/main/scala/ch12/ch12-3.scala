@@ -12,6 +12,11 @@ class Employee(name: String, val id: String, val monthlyCost: Int) extends Party
   def assignCar() = {
     println(s"Assigning car to $name")
   }
+  def finishConstructor(): Unit = {
+    if (isPrivileged) {
+      assignCar()
+    }
+  }
 }
 class Department(name: String, val monthlyCost: Int) extends Party(name) {}
 
@@ -20,9 +25,7 @@ class Manager(name: String, id: String, monthlyCost: Int) extends Employee(name,
   def this(name: String, grade: Int, id: String, monthlyCost: Int) = {
     this(name, id, monthlyCost)
     this._grade = grade
-    if (isPrivileged) {
-      assignCar()
-    }
+    finishConstructor()
   }
 }
 
