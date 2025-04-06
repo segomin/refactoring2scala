@@ -22,16 +22,31 @@ def createBird(data: Data): Bird = {
 class Bird(data: Data) {
   val name: String = data.name
   private val _plumage: String = if (data.plumage == null) "보통이다" else data.plumage
-  def airSpeedVelocity: Double = 0.0
+  val _speciesDelegate: BirdDelegate = selectSpeciesDelegate(data)
+  def airSpeedVelocity: Double = if (_speciesDelegate != null)
+    _speciesDelegate.airSpeedVelocity
+  else
+    0.0
   def plumage: String = _plumage
+
+  private def selectSpeciesDelegate(data: Data): BirdDelegate = {
+    data.kind match {
+      case "유럽 제비" => new EuropeanSwallowDelegate(data)
+      case _ => null
+    }
+  }
 }
 
 class EuropeanSwallow(data: Data) extends Bird(data) {
-  override def airSpeedVelocity: Double = 35.0
+  override def airSpeedVelocity: Double = _speciesDelegate.airSpeedVelocity
 }
 
-trait BirdDelegate
+trait BirdDelegate {
+  def airSpeedVelocity: Double
+}
+
 class EuropeanSwallowDelegate(data: Data) extends BirdDelegate{
+  override def airSpeedVelocity: Double = 35.0
 }
 
 class AfricanSwallow(data: Data) extends Bird(data) {
