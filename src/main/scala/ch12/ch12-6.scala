@@ -2,21 +2,19 @@ package ch12_6
 
 import org.scalatest.Assertions.*
 
-class Employee(val name: String, val _kind: String) {
-  require(_kind == "engineer" || _kind == "manager" || _kind == "salesperson",
-    s"${_kind}라는 직원 유형은 없습니다.")
-  def kind = _kind
+abstract class Employee(val name: String) {
+  def kind: String
 
   override def toString = s"$name ($kind)"
 }
 
-class Engineer(name: String) extends Employee(name, "engineer") {
+class Engineer(name: String) extends Employee(name) {
   override val kind: String = "engineer"
 }
-class Manager(name: String) extends Employee(name, "manager") {
+class Manager(name: String) extends Employee(name) {
   override val kind: String = "manager"
 }
-class Salesperson(name: String) extends Employee(name, "salesperson") {
+class Salesperson(name: String) extends Employee(name) {
   override val kind: String = "salesperson"
 }
 
@@ -25,7 +23,7 @@ def createEmployee(name: String, kind: String): Employee = {
     case "engineer" => new Engineer(name)
     case "manager" => new Manager(name)
     case "salesperson" => new Salesperson(name)
-    case _ => new Employee(name, kind)
+    case _ => throw new IllegalArgumentException(s"${kind}라는 직원 유형은 없습니다.")
   }
 }
 
