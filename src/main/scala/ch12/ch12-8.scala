@@ -2,16 +2,18 @@ package ch12_8
 
 import org.scalatest.Assertions.*
 
-class Party(val name: String)
-
-class Employee(name: String, val id: String, val monthlyCost: Int) extends Party(name) {
+abstract class Party(val name: String) {
+  def monthlyCost: Int
   def annualCost: Int = monthlyCost * 12
 }
 
+class Employee(name: String, val id: String, val _monthlyCost: Int) extends Party(name) {
+  override def monthlyCost: Int = _monthlyCost
+}
+
 class Department(name: String, val staff: List[Employee]) extends Party(name) {
-  def monthlyCost: Int = staff.map(_.monthlyCost).sum
+  override def monthlyCost: Int = staff.map(_._monthlyCost).sum
   def headCount: Int = staff.size
-  def annualCost: Int = monthlyCost * 12
 }
 
 // main
@@ -27,7 +29,4 @@ class Department(name: String, val staff: List[Employee]) extends Party(name) {
   // Test the annual cost of an individual employee
   assertResult(12000)(employee1.annualCost)
   assertResult(24000)(employee2.annualCost)
-//  assert(john.isMale)
-//  assertResult(jane.genderCode)(persons(1).genderCode)
-//  assertResult(person.genderCode)(persons(2).genderCode)
 }
