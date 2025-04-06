@@ -39,15 +39,18 @@ class Booking(val show: Show, date: OffsetDateTime) {
       result
   }
 
+  def hasDinner: Boolean = {
+    if (premiumDelegate == null)
+      throw new IllegalStateException("프리미엄이 아니면 저녁은 확인할 수 없습니다.")
+    premiumDelegate.hasDinner
+  }
+
   def _bePremium(extras: Extras): Unit = {
     premiumDelegate = new PremiumBookingDelegate(this, extras)
   }
 }
 
 class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) extends Booking(show, date) {
-  def hasDinner: Boolean = {
-    extras.hasDinner && isPeakDay
-  }
 }
 
 class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
@@ -56,6 +59,10 @@ class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
 
   def hasTalkback: Boolean = {
     host.show.hasTalkback
+  }
+
+  def hasDinner: Boolean = {
+    extras.hasDinner && host.isPeakDay
   }
 }
 
