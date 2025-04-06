@@ -23,15 +23,15 @@ def createEmployee(name: String, kind: String): Employee = {
 
 // main
 @main def main() = {
-  val engineer = new Employee("Alice", "engineer")
-  val manager = new Employee("Bob", "manager")
-  val salesperson = new Employee("Charlie", "salesperson")
+  val engineer = createEmployee("Alice", "engineer")
+  val manager = createEmployee("Bob", "manager")
+  val salesperson = createEmployee("Charlie", "salesperson")
 
   assertResult("Alice (engineer)")(engineer.toString)
   assertResult("Bob (manager)")(manager.toString)
   assertResult("Charlie (salesperson)")(salesperson.toString)
 
   assertThrows[IllegalArgumentException] {
-    new Employee("Dave", "invalid")
+    createEmployee("Dave", "invalid")
   }
 }
