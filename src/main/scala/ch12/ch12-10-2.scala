@@ -12,7 +12,6 @@ case class Data(name: String,
 
 def createBird(data: Data): Bird = {
   data.kind match {
-    case "유럽 제비" => new EuropeanSwallow(data)
     case "아프리카 제비" => new AfricanSwallow(data)
     case "노르웨이 파랑 앵무" => new NorwegianBlueParrot(data)
     case _ => new Bird(data)
@@ -35,10 +34,6 @@ class Bird(data: Data) {
       case _ => null
     }
   }
-}
-
-class EuropeanSwallow(data: Data) extends Bird(data) {
-  override def airSpeedVelocity: Double = _speciesDelegate.airSpeedVelocity
 }
 
 trait BirdDelegate {
