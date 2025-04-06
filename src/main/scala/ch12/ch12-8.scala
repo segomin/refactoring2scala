@@ -2,11 +2,13 @@ package ch12_8
 
 import org.scalatest.Assertions.*
 
-class Employee(val name: String, val id: String, val monthlyCost: Int) {
+class Party(val name: String)
+
+class Employee(name: String, val id: String, val monthlyCost: Int) extends Party(name) {
   def annualCost: Int = monthlyCost * 12
 }
 
-class Department(val name: String, val staff: List[Employee]) {
+class Department(name: String, val staff: List[Employee]) extends Party(name) {
   def totalMonthlyCost: Int = staff.map(_.monthlyCost).sum
   def headCount: Int = staff.size
   def totalAnnualCost: Int = totalMonthlyCost * 12
