@@ -5,7 +5,7 @@ import org.scalatest.Assertions.*
 class Person(val name: String, val genderCode: String = "X") {
   require(genderCode == "M" || genderCode == "F" || genderCode == "X")
 
-  def isMale = this.isInstanceOf[Male]
+  def isMale = genderCode == "M"
 }
 class Male(name: String) extends Person(name, "M") {
 }
@@ -19,15 +19,15 @@ def loadFromInput(data: List[Item]): List[Person] = {
 }
 
 def createPerson(item: Item) = item.gender match {
-  case "M" => new Male(item.name)
-  case "F" => new Female(item.name)
+  case "M" => new Person(item.name, "M")
+  case "F" => new Person(item.name, "F")
   case _ => new Person(item.name)
 }
 
 // main
 @main def main() = {
-  val john = new Male("John")
-  val jane = new Female("Jane")
+  val john = new Person("John", "M")
+  val jane = new Person("Jane", "F")
   val person = new Person("Person")
   assertResult("M")(john.genderCode)
   assertResult("F")(jane.genderCode)
