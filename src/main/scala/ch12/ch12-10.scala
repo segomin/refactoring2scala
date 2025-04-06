@@ -28,18 +28,15 @@ class Booking(val show: Show, date: OffsetDateTime) {
   }
 
   def basePrice: Double = {
-    if (premiumDelegate != null)
-      premiumDelegate.basePrice
-    else
-      privateBasePrice
-  }
-
-  def privateBasePrice = {
     var result = show.price
     if (isPeakDay) {
       result += (result * 0.15).round
     }
-    result
+
+    if (premiumDelegate != null)
+      premiumDelegate.extraBasePrice(result)
+    else
+      result
   }
 
   def _bePremium(extras: Extras): Unit = {
@@ -54,8 +51,8 @@ class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) exten
 }
 
 class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
-  def basePrice: Double =
-    (host.privateBasePrice + extras.premiumFee).round
+  def extraBasePrice(base: Double): Double =
+    (base + extras.premiumFee).round
 
   def hasTalkback: Boolean = {
     host.show.hasTalkback
