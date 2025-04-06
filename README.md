@@ -15,4 +15,4 @@
 - [x] [CHAPTER 09 데이터 조직화](src/main/scala/ch09/README.md)
 - [x] [CHAPTER 10 조건부 로직 간소화](src/main/scala/ch10/README.md)
 - [x] [CHAPTER 11 API 리팩터링](src/main/scala/ch11/README.md)
-- [ ] [CHAPTER 12 상속 다루기](src/main/scala/ch12/README.md)
+- [x] [CHAPTER 12 상속 다루기](src/main/scala/ch12/README.md)
