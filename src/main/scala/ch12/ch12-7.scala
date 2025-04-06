@@ -26,12 +26,16 @@ def loadFromInput(data: List[Item]): List[Person] = {
 @main def main() = {
   val john = new Male("John")
   val jane = new Female("Jane")
+  val person = new Person("Person")
   assertResult("M")(john.genderCode)
   assertResult("F")(jane.genderCode)
+  assertResult("X")(person.genderCode)
   val persons = loadFromInput(List(
     Item("M", "John"),
-    Item("F", "Jane")
+    Item("F", "Jane"),
+    Item("X", "Person")
   ))
   assertResult(john.genderCode)(persons(0).genderCode)
   assertResult(jane.genderCode)(persons(1).genderCode)
+  assertResult(person.genderCode)(persons(2).genderCode)
 }
