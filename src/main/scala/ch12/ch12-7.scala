@@ -7,10 +7,6 @@ class Person(val name: String, val genderCode: String = "X") {
 
   def isMale = genderCode == "M"
 }
-class Male(name: String) extends Person(name, "M") {
-}
-class Female(name: String) extends Person(name, "F") {
-}
 
 case class Item(gender: String, name: String)
 
