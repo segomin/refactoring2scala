@@ -9,7 +9,7 @@ case class Show(price: Double, talkback: String = null) {
     talkback != null
   }
 }
-case class Extras(dinner: String = null) {
+case class Extras(premiumFee: Double, dinner: String = null) {
   def hasDinner: Boolean = {
     dinner != null
   }
@@ -28,6 +28,13 @@ class Booking(val show: Show, date: OffsetDateTime) {
   }
 
   def basePrice: Double = {
+    if (premiumDelegate != null)
+      premiumDelegate.basePrice
+    else
+      privateBasePrice
+  }
+
+  def privateBasePrice = {
     var result = show.price
     if (isPeakDay) {
       result += (result * 0.15).round
@@ -47,6 +54,9 @@ class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) exten
 }
 
 class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
+  def basePrice: Double =
+    (host.privateBasePrice + extras.premiumFee).round
+
   def hasTalkback: Boolean = {
     host.show.hasTalkback
   }
@@ -73,9 +83,9 @@ def createPremiumBooking(show: Show, date: OffsetDateTime, extras: Extras): Prem
   assertResult(100.0)(booking.basePrice)
 
   val sunday = OffsetDateTime.parse("2025-04-06T10:00:00Z")
-  val premiumBooking = createPremiumBooking(show, sunday, Extras("Dinner"))
+  val premiumBooking = createPremiumBooking(show, sunday, Extras(10, "Dinner"))
   assertResult(true)(premiumBooking.hasTalkback)
   assertResult(true)(premiumBooking.isPeakDay)
-  assertResult(115.0)(premiumBooking.basePrice)
+  assertResult(125.0)(premiumBooking.basePrice)
   assertResult(true)(premiumBooking.hasDinner)
 }
