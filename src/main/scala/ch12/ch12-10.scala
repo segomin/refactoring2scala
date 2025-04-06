@@ -50,9 +50,6 @@ class Booking(val show: Show, date: OffsetDateTime) {
   }
 }
 
-class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) extends Booking(show, date) {
-}
-
 class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
   def extraBasePrice(base: Double): Double =
     (base + extras.premiumFee).round
@@ -70,8 +67,8 @@ def createBooking(show: Show, date: OffsetDateTime): Booking = {
   new Booking(show, date)
 }
 
-def createPremiumBooking(show: Show, date: OffsetDateTime, extras: Extras): PremiumBooking = {
-  val result = new PremiumBooking(show, date, extras)
+def createPremiumBooking(show: Show, date: OffsetDateTime, extras: Extras): Booking = {
+  val result = new Booking(show, date)
   result._bePremium(extras)
   result
 }
