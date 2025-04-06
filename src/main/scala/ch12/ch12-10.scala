@@ -16,7 +16,7 @@ case class Extras(dinner: String = null) {
 }
 
 class Booking(val show: Show, date: OffsetDateTime) {
-  private var premiumBookingDelegate: PremiumBookingDelegate = null
+  var premiumDelegate: PremiumBookingDelegate = null
   def hasTalkback: Boolean = {
     show.hasTalkback && !isPeakDay
   }
@@ -34,18 +34,21 @@ class Booking(val show: Show, date: OffsetDateTime) {
   }
 
   def _bePremium(extras: Extras): Unit = {
-    premiumBookingDelegate = new PremiumBookingDelegate(this, extras)
+    premiumDelegate = new PremiumBookingDelegate(this, extras)
   }
 }
 
 class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) extends Booking(show, date) {
-  override def hasTalkback: Boolean = show.hasTalkback
+  override def hasTalkback: Boolean = premiumDelegate.hasTalkback
   def hasDinner: Boolean = {
     extras.hasDinner && isPeakDay
   }
 }
 
 class PremiumBookingDelegate(val host: Booking, val extras: Extras) {
+  def hasTalkback: Boolean = {
+    host.show.hasTalkback
+  }
 }
 
 def createBooking(show: Show, date: OffsetDateTime): Booking = {
