@@ -2,14 +2,14 @@ package ch12_7
 
 import org.scalatest.Assertions.*
 
-class Person(val name: String) {
-  def genderCode = "X"
+class Person(val name: String, val genderCode: String = "X") {
+  require(genderCode == "M" || genderCode == "F" || genderCode == "X")
+
+  def isMale = this.isInstanceOf[Male]
 }
-class Male(name: String) extends Person(name) {
-  override def genderCode = "M"
+class Male(name: String) extends Person(name, "M") {
 }
-class Female(name: String) extends Person(name) {
-  override def genderCode = "F"
+class Female(name: String) extends Person(name, "F") {
 }
 
 case class Item(gender: String, name: String)
@@ -38,6 +38,7 @@ def createPerson(item: Item) = item.gender match {
     Item("X", "Person")
   ))
   assertResult(john.genderCode)(persons(0).genderCode)
+  assert(john.isMale)
   assertResult(jane.genderCode)(persons(1).genderCode)
   assertResult(person.genderCode)(persons(2).genderCode)
 }
