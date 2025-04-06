@@ -6,11 +6,12 @@ import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
 
-class CatalogItem(val id: String, val title: String, val tags: List[String]) {
-  def hasTag(tag: String): Boolean = tags.contains(tag)
-}
+class Scroll(_id: String, _title: String, _tags: List[String], val lastCleaned: OffsetDateTime) {
+  val _catalogItem = new CatalogItem(_id, _title, _tags)
 
-class Scroll(id: String, title: String, tags: List[String], val lastCleaned: OffsetDateTime) extends CatalogItem(id, title, tags) {
+  def id: String = _catalogItem.id
+  def title: String = _catalogItem.title
+  def hasTag(tag: String): Boolean = _catalogItem.hasTag(tag)
 
   def needCleaning(targetDate: OffsetDateTime): Boolean = {
     val threshold = if hasTag("revered") then 700 else 1500
