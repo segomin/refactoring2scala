@@ -13,10 +13,18 @@ class Employee(val name: String, val _kind: String) {
 class Engineer(name: String) extends Employee(name, "engineer") {
   override val kind: String = "engineer"
 }
+class Manager(name: String) extends Employee(name, "manager") {
+  override val kind: String = "manager"
+}
+class Salesperson(name: String) extends Employee(name, "salesperson") {
+  override val kind: String = "salesperson"
+}
 
 def createEmployee(name: String, kind: String): Employee = {
   kind match {
     case "engineer" => new Engineer(name)
+    case "manager" => new Manager(name)
+    case "salesperson" => new Salesperson(name)
     case _ => new Employee(name, kind)
   }
 }
