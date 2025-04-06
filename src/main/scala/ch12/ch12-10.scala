@@ -1,0 +1,58 @@
+package ch12_10
+
+import org.scalatest.Assertions.*
+
+import java.time.OffsetDateTime
+
+case class Show(price: Double, talkback: String = null) {
+  def hasTalkback: Boolean = {
+    talkback != null
+  }
+}
+case class Extras(dinner: String = null) {
+  def hasDinner: Boolean = {
+    dinner != null
+  }
+}
+
+class Booking(val show: Show, date: OffsetDateTime) {
+  def hasTalkback: Boolean = {
+    show.hasTalkback && !isPeakDay
+  }
+
+  def isPeakDay: Boolean = {
+    date.getDayOfWeek.getValue == 6 || date.getDayOfWeek.getValue == 7
+  }
+
+  def basePrice: Double = {
+    var result = show.price
+    if (isPeakDay) {
+      result += (result * 0.15).round
+    }
+    result
+  }
+}
+
+class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) extends Booking(show, date) {
+  override def hasTalkback: Boolean = show.hasTalkback
+  def hasDinner: Boolean = {
+    extras.hasDinner && isPeakDay
+  }
+}
+
+// main
+@main def main() = {
+  val show = Show(100.0, "Talkback")
+  val monday = OffsetDateTime.parse("2025-04-07T10:00:00Z")
+  val booking = new Booking(show, monday)
+  assertResult(true)(booking.hasTalkback)
+  assertResult(false)(booking.isPeakDay)
+  assertResult(100.0)(booking.basePrice)
+
+  val sunday = OffsetDateTime.parse("2025-04-06T10:00:00Z")
+  val premiumBooking = new PremiumBooking(show, sunday, Extras("Dinner"))
+  assertResult(true)(premiumBooking.hasTalkback)
+  assertResult(true)(premiumBooking.isPeakDay)
+  assertResult(115.0)(premiumBooking.basePrice)
+  assertResult(true)(premiumBooking.hasDinner)
+}
