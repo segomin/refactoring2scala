@@ -12,7 +12,6 @@ case class Data(name: String,
 
 def createBird(data: Data): Bird = {
   data.kind match {
-    case "노르웨이 파랑 앵무" => new NorwegianBlueParrot(data)
     case _ => new Bird(data)
   }
 }
@@ -25,12 +24,16 @@ class Bird(data: Data) {
     _speciesDelegate.airSpeedVelocity
   else
     0.0
-  def plumage: String = _plumage
+  def plumage: String = _speciesDelegate match {
+    case value: NorwegianBlueParrotDelegate => value.plumage
+    case _ => _plumage
+  }
 
   private def selectSpeciesDelegate(data: Data): BirdDelegate = {
     data.kind match {
       case "유럽 제비" => new EuropeanSwallowDelegate(data)
       case "아프리카 제비" => new AfricanSwallowDelegate(data)
+      case "노르웨이 파랑 앵무" => new NorwegianBlueParrotDelegate(data)
       case _ => null
     }
   }
@@ -49,8 +52,8 @@ class AfricanSwallowDelegate(data: Data) extends BirdDelegate {
   override def airSpeedVelocity: Double = 40.0 - 2.0 * data.numberOfCoconuts
 }
 
-class NorwegianBlueParrot(data: Data) extends Bird(data) {
-  override def plumage: String = if (data.voltage > 100)
+class NorwegianBlueParrotDelegate(data: Data) extends BirdDelegate {
+  def plumage: String = if (data.voltage > 100)
     "그을렸다"
   else if (data.plumage == null)
     "예쁘다"
