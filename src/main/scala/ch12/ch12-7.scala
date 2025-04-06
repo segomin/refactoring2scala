@@ -15,11 +15,13 @@ class Female(name: String) extends Person(name) {
 case class Item(gender: String, name: String)
 
 def loadFromInput(data: List[Item]): List[Person] = {
-  data.map(item => item.gender match {
-    case "M" => new Male(item.name)
-    case "F" => new Female(item.name)
-    case _ => new Person(item.name)
-  })
+  data.map(item => createPerson(item))
+}
+
+def createPerson(item: Item) = item.gender match {
+  case "M" => new Male(item.name)
+  case "F" => new Female(item.name)
+  case _ => new Person(item.name)
 }
 
 // main
