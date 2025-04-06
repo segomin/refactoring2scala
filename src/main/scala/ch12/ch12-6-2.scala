@@ -2,43 +2,52 @@ package ch12_6_2
 
 import org.scalatest.Assertions.*
 
-case class EmployeeType(value: String) {
+trait EmployeeType {
+  def value: String
   override def toString: String = value
 }
+case class Engineer() extends EmployeeType {
+  override def value: String = "engineer"
+}
+case class Manager() extends EmployeeType {
+  override def value: String = "manager"
+}
+case class Salesperson() extends EmployeeType {
+  override def value: String = "salesperson"
+}
 
-class Employee(val name: String, private var _kind: EmployeeType) {
-  validateType(_kind)
-
-  def kind: EmployeeType = _kind
-
-  def kind_=(newKind: EmployeeType): Unit = {
-    validateType(newKind)
-    _kind = newKind
-  }
-
-  private def validateType(kind: EmployeeType): Unit = {
-    require(kind.value == "engineer" || kind.value == "manager" || kind.value == "salesperson",
-      s"${kind}라는 직원 유형은 없습니다.")
-  }
+class Employee(val name: String, _kind: String) {
+  val kind = Employee.createEmployeeType(_kind)
 
   def capitalizedKind: String = {
-    _kind.value.capitalize
+    kind.value.capitalize
   }
 
   override def toString = s"$name ($capitalizedKind)"
 }
 
+object Employee {
+  def createEmployeeType(kind: String): EmployeeType = {
+    kind match {
+      case "engineer" => Engineer()
+      case "manager" => Manager()
+      case "salesperson" => Salesperson()
+      case _ => throw new IllegalArgumentException(s"${kind}라는 직원 유형은 없습니다.")
+    }
+  }
+}
+
 // main
 @main def main() = {
-  val engineer = new Employee("Alice", EmployeeType("engineer"))
-  val manager = new Employee("Bob", EmployeeType("manager"))
-  val salesperson = new Employee("Charlie", EmployeeType("salesperson"))
+  val engineer = new Employee("Alice", "engineer")
+  val manager = new Employee("Bob", "manager")
+  val salesperson = new Employee("Charlie", "salesperson")
 
   assertResult("Alice (Engineer)")(engineer.toString)
   assertResult("Bob (Manager)")(manager.toString)
   assertResult("Charlie (Salesperson)")(salesperson.toString)
 
   assertThrows[IllegalArgumentException] {
-    new Employee("Dave", EmployeeType("invalid"))
+    new Employee("Dave", "invalid")
   }
 }
