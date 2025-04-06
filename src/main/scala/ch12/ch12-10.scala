@@ -40,17 +40,26 @@ class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) exten
   }
 }
 
+def createBooking(show: Show, date: OffsetDateTime): Booking = {
+  new Booking(show, date)
+}
+
+def createPremiumBooking(show: Show, date: OffsetDateTime, extras: Extras): PremiumBooking = {
+  new PremiumBooking(show, date, extras)
+}
+
+
 // main
 @main def main() = {
   val show = Show(100.0, "Talkback")
   val monday = OffsetDateTime.parse("2025-04-07T10:00:00Z")
-  val booking = new Booking(show, monday)
+  val booking = createBooking(show, monday)
   assertResult(true)(booking.hasTalkback)
   assertResult(false)(booking.isPeakDay)
   assertResult(100.0)(booking.basePrice)
 
   val sunday = OffsetDateTime.parse("2025-04-06T10:00:00Z")
-  val premiumBooking = new PremiumBooking(show, sunday, Extras("Dinner"))
+  val premiumBooking = createPremiumBooking(show, sunday, Extras("Dinner"))
   assertResult(true)(premiumBooking.hasTalkback)
   assertResult(true)(premiumBooking.isPeakDay)
   assertResult(115.0)(premiumBooking.basePrice)
