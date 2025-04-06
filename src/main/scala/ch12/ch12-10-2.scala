@@ -10,15 +10,10 @@ case class Data(name: String,
                 isNailed: Boolean = false) {
 }
 
-def createBird(data: Data): Bird = {
-  data.kind match {
-    case _ => new Bird(data)
-  }
-}
+def createBird(data: Data): Bird = new Bird(data)
 
 class Bird(data: Data) {
   val name: String = data.name
-  private val _plumage: String = if (data.plumage == null) "보통이다" else data.plumage
   val _speciesDelegate: BirdDelegate = selectSpeciesDelegate(data)
   def airSpeedVelocity: Double = if (_speciesDelegate != null)
     _speciesDelegate.airSpeedVelocity
@@ -26,7 +21,7 @@ class Bird(data: Data) {
     0.0
   def plumage: String = _speciesDelegate match {
     case value: NorwegianBlueParrotDelegate => value.plumage
-    case _ => _plumage
+    case _ => data.plumage
   }
 
   private def selectSpeciesDelegate(data: Data): BirdDelegate = {
