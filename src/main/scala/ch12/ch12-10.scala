@@ -18,6 +18,8 @@ case class Extras(dinner: String = null) {
 class Booking(val show: Show, date: OffsetDateTime) {
   var premiumDelegate: PremiumBookingDelegate = null
   def hasTalkback: Boolean = {
+    if (premiumDelegate != null)
+      premiumDelegate.hasTalkback else
     show.hasTalkback && !isPeakDay
   }
 
@@ -39,7 +41,6 @@ class Booking(val show: Show, date: OffsetDateTime) {
 }
 
 class PremiumBooking(show: Show, date: OffsetDateTime, val extras: Extras) extends Booking(show, date) {
-  override def hasTalkback: Boolean = premiumDelegate.hasTalkback
   def hasDinner: Boolean = {
     extras.hasDinner && isPeakDay
   }
